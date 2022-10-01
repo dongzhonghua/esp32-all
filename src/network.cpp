@@ -9,16 +9,16 @@ void Network::init(const String &ssid, const String &password) {
   } else {
     Serial.print(n);
     Serial.println(" networks found");
-    for (int i = 0; i < n; ++i) {
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.print(WiFi.SSID(i));
-      Serial.print(" (");
-      Serial.print(WiFi.RSSI(i));
-      Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
-      delay(10);
-    }
+    // for (int i = 0; i < n; ++i) {
+    //   Serial.print(i + 1);
+    //   Serial.print(": ");
+    //   Serial.print(WiFi.SSID(i));
+    //   Serial.print(" (");
+    //   Serial.print(WiFi.RSSI(i));
+    //   Serial.print(")");
+    //   Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+    //   delay(10);
+    // }
   }
   Serial.println("");
   Serial.print("Connecting: ");
@@ -28,17 +28,31 @@ void Network::init(const String &ssid, const String &password) {
 
   WiFi.begin(ssid.c_str(), password.c_str());
   while (WiFiClass::status() != WL_CONNECTED) {
-    delay(500);
+    delay(200);
     Serial.print(".");
   }
   Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+  Serial.print("WiFi connected, ");
+  Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   ip_ = WiFi.localIP().toString();
 
   timeClient_ = new NTPClient(ntpUDP_, NTP_ADDRESS, NTP_OFFSET);
   timeClient_->begin();
+}
+
+String Network::openWeather() {
+  String url = "https://api.seniverse.com/v3/weather/now.json?key=" + API_KEY +
+               "&location=" + CITY + "&language=en&unit=c";  // 中文：zh-Hans
+  http_.begin(url);
+  int httpCode = http_.GET();
+  if (httpCode != HTTP_CODE_OK) {
+    Serial.printf("[HTTP] GET... failed, error: %s\n",
+                  HTTPClient::errorToString(httpCode).c_str());
+  }
+  String payload = http_.getString();
+  http_.end();
+  return payload;
 }
 
 unsigned int Network::getBilibiliFans(const String &uid) {
@@ -71,9 +85,9 @@ String Network::getTime() {
   timeClient_->update();
   String formattedTime = timeClient_->getFormattedTime();
 
-  unsigned long epochTime = timeClient_->getEpochTime();  // 时间戳
-  Serial.print("Epoch Time:");
-  Serial.println(epochTime);
+  // unsigned long epochTime = timeClient_->getEpochTime();  // 时间戳
+  // Serial.print("Epoch Time:");
+  // Serial.println(epochTime);
 
   // //打印时间
   // Serial.println(timeClient_->getFormattedTime());
