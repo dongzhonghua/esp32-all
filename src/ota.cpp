@@ -2,7 +2,7 @@
 
 #include <ArduinoOTA.h>
 
-void OTA::initOTA() {
+void OTA::init() {
   ArduinoOTA
       .onStart([]() {
         String type;
