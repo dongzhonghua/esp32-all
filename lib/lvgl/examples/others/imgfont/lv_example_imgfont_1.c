@@ -6,26 +6,18 @@
 
 LV_IMG_DECLARE(emoji_F617)
 static bool get_imgfont_path(const lv_font_t * font, void * img_src,
-                             uint16_t len, uint32_t unicode, uint32_t unicode_next,
-                             void * user_data)
+                             uint16_t len, uint32_t unicode, uint32_t unicode_next)
 {
     LV_UNUSED(font);
     LV_UNUSED(unicode_next);
-    LV_UNUSED(user_data);
     LV_ASSERT_NULL(img_src);
-
-    if(unicode < 0xF000) return false;
 
     if(unicode == 0xF617) {
         memcpy(img_src, &emoji_F617, sizeof(lv_img_dsc_t));
     }
     else {
         char * path = (char *)img_src;
-#if LV_USE_FFMPEG
-        snprintf(path, len, "%s/%04X.%s", "lvgl/examples/assets/emoji", unicode, "png");
-#elif LV_USE_PNG
         snprintf(path, len, "%s/%04X.%s", "A:lvgl/examples/assets/emoji", unicode, "png");
-#endif
         path[len - 1] = '\0';
     }
 
@@ -37,7 +29,7 @@ static bool get_imgfont_path(const lv_font_t * font, void * img_src,
  */
 void lv_example_imgfont_1(void)
 {
-    lv_font_t * imgfont = lv_imgfont_create(80, get_imgfont_path, NULL);
+    lv_font_t * imgfont = lv_imgfont_create(80, get_imgfont_path);
     if(imgfont == NULL) {
         LV_LOG_ERROR("imgfont init error");
     }

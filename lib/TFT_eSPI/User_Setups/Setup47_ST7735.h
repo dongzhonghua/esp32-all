@@ -4,7 +4,7 @@
 #define ST7735_DRIVER     // Configure all registers
 
 #define TFT_WIDTH  128
-#define TFT_HEIGHT 128
+#define TFT_HEIGHT 160
 
 // #define ST7735_INITB
 // #define ST7735_GREENTAB
@@ -29,6 +29,7 @@
 //#define TFT_CS    21 // Not defined here, chip select is managed by sketch
 #define TFT_DC    2
 #define TFT_RST   4  // Connect reset to ensure display initialises
+#define TFT_BLK   5  // 背光
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters

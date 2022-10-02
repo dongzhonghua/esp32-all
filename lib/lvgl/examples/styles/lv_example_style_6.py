@@ -1,3 +1,9 @@
+from imagetools import get_png_info, open_png
+# Register PNG image decoder
+decoder = lv.img.decoder_create()
+decoder.info_cb = get_png_info
+decoder.open_cb = open_png
+
 # Create an image from the png file
 try:
     with open('../assets/img_cogwheel_argb.png', 'rb') as f:

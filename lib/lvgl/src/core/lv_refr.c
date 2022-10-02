@@ -17,10 +17,10 @@
 #include "../misc/lv_gc.h"
 #include "../draw/lv_draw.h"
 #include "../font/lv_font_fmt_txt.h"
-#include "../others/snapshot/lv_snapshot.h"
+#include "../extra/others/snapshot/lv_snapshot.h"
 
 #if LV_USE_PERF_MONITOR || LV_USE_MEM_MONITOR
-    #include "../widgets/label/lv_label.h"
+    #include "../widgets/lv_label.h"
 #endif
 
 /*********************
@@ -288,6 +288,7 @@ void _lv_disp_refr_timer(lv_timer_t * tmr)
     REFR_TRACE("begin");
 
     uint32_t start = lv_tick_get();
+    volatile uint32_t elaps = 0;
 
     if(tmr) {
         disp_refr = tmr->user_data;
@@ -303,8 +304,54 @@ void _lv_disp_refr_timer(lv_timer_t * tmr)
         disp_refr = lv_disp_get_default();
     }
 
-    uint32_t elaps = lv_tick_elaps(disp_refr->last_render_start_time);
-    disp_refr->last_render_start_time = start;
+    /*Refresh the screen's layout if required*/
+    lv_obj_update_layout(disp_refr->act_scr);
+    if(disp_refr->prev_scr) lv_obj_update_layout(disp_refr->prev_scr);
+
+    lv_obj_update_layout(disp_refr->top_layer);
+    lv_obj_update_layout(disp_refr->sys_layer);
+
+    /*Do nothing if there is no active screen*/
+    if(disp_refr->act_scr == NULL) {
+        disp_refr->inv_p = 0;
+        LV_LOG_WARN("there is no active screen");
+        REFR_TRACE("finished");
+        return;
+    }
+
+    lv_refr_join_area();
+
+    refr_invalid_areas();
+
+
+    /*If refresh happened ...*/
+    if(disp_refr->inv_p != 0) {
+        if(disp_refr->driver->full_refresh) {
+            lv_area_t disp_area;
+            lv_area_set(&disp_area, 0, 0, lv_disp_get_hor_res(disp_refr) - 1, lv_disp_get_ver_res(disp_refr) - 1);
+            disp_refr->driver->draw_ctx->buf_area = &disp_area;
+            draw_buf_flush(disp_refr);
+        }
+
+        /*Clean up*/
+        lv_memset_00(disp_refr->inv_areas, sizeof(disp_refr->inv_areas));
+        lv_memset_00(disp_refr->inv_area_joined, sizeof(disp_refr->inv_area_joined));
+        disp_refr->inv_p = 0;
+
+        elaps = lv_tick_elaps(start);
+
+        /*Call monitor cb if present*/
+        if(disp_refr->driver->monitor_cb) {
+            disp_refr->driver->monitor_cb(disp_refr->driver, elaps, px_num);
+        }
+    }
+
+    lv_mem_buf_free_all();
+    _lv_font_clean_up_fmt_txt();
+
+#if LV_DRAW_COMPLEX
+    _lv_draw_mask_cleanup();
+#endif
 
 #if LV_USE_PERF_MONITOR && LV_USE_LABEL
     lv_obj_t * perf_label = perf_monitor.perf_label;
@@ -338,7 +385,7 @@ void _lv_disp_refr_timer(lv_timer_t * tmr)
             fps_limit = 1000 / disp_refr->refr_timer->period;
         }
         else {
-            fps_limit = 1000 / 33;
+            fps_limit = 1000 / LV_DISP_DEF_REFR_PERIOD;
         }
 
         if(perf_monitor.elaps_sum == 0) {
@@ -363,7 +410,7 @@ void _lv_disp_refr_timer(lv_timer_t * tmr)
     }
 #endif
 
-#if LV_USE_MEM_MONITOR && LV_USE_BUILTIN_MALLOC && LV_USE_LABEL
+#if LV_USE_MEM_MONITOR && LV_MEM_CUSTOM == 0 && LV_USE_LABEL
     lv_obj_t * mem_label = mem_monitor.mem_label;
     if(mem_label == NULL) {
         mem_label = lv_label_create(lv_layer_sys());
@@ -392,57 +439,6 @@ void _lv_disp_refr_timer(lv_timer_t * tmr)
                               used_kb, used_kb_tenth, mon.used_pct,
                               mon.frag_pct);
     }
-#endif
-
-    /*Refresh the screen's layout if required*/
-    lv_obj_update_layout(disp_refr->act_scr);
-    if(disp_refr->prev_scr) lv_obj_update_layout(disp_refr->prev_scr);
-
-    lv_obj_update_layout(disp_refr->top_layer);
-    lv_obj_update_layout(disp_refr->sys_layer);
-
-    /*Do nothing if there is no active screen*/
-    if(disp_refr->act_scr == NULL) {
-        disp_refr->inv_p = 0;
-        LV_LOG_WARN("there is no active screen");
-        REFR_TRACE("finished");
-        return;
-    }
-
-    if(disp_refr->driver->direct_mode && disp_refr->driver->draw_ctx->color_format != LV_COLOR_FORMAT_NATIVE) {
-        LV_LOG_WARN("In direct_mode only LV_COLOR_FORMAT_NATIVE color format is supported");
-        return;
-    }
-
-    lv_refr_join_area();
-
-    refr_invalid_areas();
-
-
-    /*If refresh happened ...*/
-    if(disp_refr->inv_p != 0) {
-        if(disp_refr->driver->full_refresh) {
-            lv_area_t disp_area;
-            lv_area_set(&disp_area, 0, 0, lv_disp_get_hor_res(disp_refr) - 1, lv_disp_get_ver_res(disp_refr) - 1);
-            disp_refr->driver->draw_ctx->buf_area = &disp_area;
-            draw_buf_flush(disp_refr);
-        }
-
-        /*Clean up*/
-        lv_memzero(disp_refr->inv_areas, sizeof(disp_refr->inv_areas));
-        lv_memzero(disp_refr->inv_area_joined, sizeof(disp_refr->inv_area_joined));
-        disp_refr->inv_p = 0;
-
-        /*Call monitor cb if present*/
-        if(disp_refr->driver->monitor_cb) {
-            disp_refr->driver->monitor_cb(disp_refr->driver, elaps, px_num);
-        }
-    }
-
-    _lv_font_clean_up_fmt_txt();
-
-#if LV_USE_DRAW_MASKS
-    _lv_draw_mask_cleanup();
 #endif
 
     REFR_TRACE("finished");
@@ -632,14 +628,16 @@ static void refr_area_part(lv_draw_ctx_t * draw_ctx)
         }
 
         /*If the screen is transparent initialize it when the flushing is ready*/
+#if LV_COLOR_SCREEN_TRANSP
         if(disp_refr->driver->screen_transp) {
             if(disp_refr->driver->clear_cb) {
                 disp_refr->driver->clear_cb(disp_refr->driver, disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size);
             }
             else {
-                lv_memzero(disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size * LV_IMG_PX_SIZE_ALPHA_BYTE);
+                lv_memset_00(disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size * LV_IMG_PX_SIZE_ALPHA_BYTE);
             }
         }
+#endif
     }
 
     lv_obj_t * top_act_scr = NULL;
@@ -740,9 +738,9 @@ static lv_obj_t * lv_refr_get_top_obj(const lv_area_t * area_p, lv_obj_t * obj)
     lv_event_send(obj, LV_EVENT_COVER_CHECK, &info);
     if(info.res == LV_COVER_RES_MASKED) return NULL;
 
-    int32_t i;
-    int32_t child_cnt = lv_obj_get_child_cnt(obj);
-    for(i = child_cnt - 1; i >= 0; i--) {
+    uint32_t i;
+    uint32_t child_cnt = lv_obj_get_child_cnt(obj);
+    for(i = 0; i < child_cnt; i++) {
         lv_obj_t * child = obj->spec_attr->children[i];
         found_p = lv_refr_get_top_obj(area_p, child);
 
@@ -1144,7 +1142,7 @@ static void draw_buf_rotate(lv_area_t * area, lv_color_t * color_p)
             }
             else {
                 /*Rotate other areas using a maximum buffer size*/
-                if(rot_buf == NULL) rot_buf = lv_malloc(LV_DISP_ROT_MAX_BUF);
+                if(rot_buf == NULL) rot_buf = lv_mem_buf_get(LV_DISP_ROT_MAX_BUF);
                 draw_buf_rotate_90(drv->rotated == LV_DISP_ROT_270, area_w, height, color_p, rot_buf);
 
                 if(drv->rotated == LV_DISP_ROT_90) {
@@ -1176,7 +1174,7 @@ static void draw_buf_rotate(lv_area_t * area, lv_color_t * color_p)
             row += height;
         }
         /*Free the allocated buffer at the end if necessary*/
-        if(rot_buf != NULL) lv_free(rot_buf);
+        if(rot_buf != NULL) lv_mem_buf_release(rot_buf);
     }
 }
 
@@ -1199,14 +1197,16 @@ static void draw_buf_flush(lv_disp_t * disp)
         }
 
         /*If the screen is transparent initialize it when the flushing is ready*/
+#if LV_COLOR_SCREEN_TRANSP
         if(disp_refr->driver->screen_transp) {
             if(disp_refr->driver->clear_cb) {
                 disp_refr->driver->clear_cb(disp_refr->driver, disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size);
             }
             else {
-                lv_memzero(disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size * LV_IMG_PX_SIZE_ALPHA_BYTE);
+                lv_memset_00(disp_refr->driver->draw_buf->buf_act, disp_refr->driver->draw_buf->size * LV_IMG_PX_SIZE_ALPHA_BYTE);
             }
         }
+#endif
     }
 
     draw_buf->flushing = 1;
@@ -1246,8 +1246,6 @@ static void call_flush_cb(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_
         .y2 = area->y2 + drv->offset_y
     };
 
-    if(drv->draw_ctx->buffer_convert) drv->draw_ctx->buffer_convert(drv->draw_ctx);
-
     drv->flush_cb(drv, &offset_area, color_p);
 }
 
@@ -1272,3 +1270,4 @@ static void mem_monitor_init(mem_monitor_t * _mem_monitor)
     _mem_monitor->mem_label = NULL;
 }
 #endif
+

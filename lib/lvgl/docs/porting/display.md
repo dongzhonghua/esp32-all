@@ -60,11 +60,11 @@ Therefore the 2 buffers needs to synchronized in `flush_cb` like this:
 1. Display the frame buffer pointed by `color_p`
 2. Copy the redrawn areas from `color_p` to the other buffer.
 
-To get the redrawn areas to copy use the following functions:
-- `_lv_refr_get_disp_refreshing()` returns the display being refreshed
-- `disp->inv_areas[LV_INV_BUF_SIZE]` contains the invalidated areas
-- `disp->inv_area_joined[LV_INV_BUF_SIZE]` if 1 that area was joined into another one and should be ignored
-- `disp->inv_p` number of valid elements in `inv_areas`
+The get the redrawn areas to copy use the following functions
+`_lv_refr_get_disp_refreshing()` returns the display being refreshed
+`disp->inv_areas[LV_INV_BUF_SIZE]` contains the invalidated areas
+`disp->inv_area_joined[LV_INV_BUF_SIZE]` if 1 that area was joined into another one and should be ignored
+`disp->inv_p` number of valid elements in `inv_areas`
 
 ## Display driver
 
@@ -93,7 +93,7 @@ There are some optional display driver data fields:
 - `color_chroma_key` A color which will be drawn as transparent on chrome keyed images. Set to `LV_COLOR_CHROMA_KEY` from `lv_conf.h` by default.
 - `anti_aliasing` use anti-aliasing (edge smoothing). Enabled by default if `LV_COLOR_DEPTH` is set to at least 16 in `lv_conf.h`.
 - `rotated` and `sw_rotate` See the [Rotation](#rotation) section below.
-- `screen_transp` if `1` the screen itself can have transparency as well. `LV_COLOR_DEPTH` must be 32.
+- `screen_transp` if `1` the screen itself can have transparency as well. `LV_COLOR_SCREEN_TRANSP` must be enabled in `lv_conf.h` and `LV_COLOR_DEPTH` must be 32.
 - `user_data` A custom `void` user data for the driver.
 - `full_refresh` always redrawn the whole screen (see above)
 - `direct_mode` draw directly into the frame buffer (see above)
@@ -130,7 +130,7 @@ Here are some simple examples of the callbacks:
 void my_flush_cb(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
 {
     /*The most simple case (but also the slowest) to put all pixels to the screen one-by-one
-     *`put_px` is just an example, it needs to be implemented by you.*/
+     *`put_px` is just an example, it needs to implemented by you.*/
     int32_t x, y;
     for(y = area->y1; y <= area->y2; y++) {
         for(x = area->x1; x <= area->x2; x++) {
@@ -200,16 +200,14 @@ There is a noticeable amount of overhead to performing rotation in software. Har
 
 The default rotation of your display when it is initialized can be set using the `rotated` flag. The available options are `LV_DISP_ROT_NONE`, `LV_DISP_ROT_90`, `LV_DISP_ROT_180`, or `LV_DISP_ROT_270`. The rotation values are relative to how you would rotate the physical display in the clockwise direction. Thus, `LV_DISP_ROT_90` means you rotate the hardware 90 degrees clockwise, and the display rotates 90 degrees counterclockwise to compensate.
 
-
-```note::  For users upgrading from 7.10.0 and older: these new rotation enum values match up with the old 0/1 system for rotating 90 degrees, so legacy code should continue to work as expected. Software rotation is also disabled by default for compatibility.
-```
+(Note for users upgrading from 7.10.0 and older: these new rotation enum values match up with the old 0/1 system for rotating 90 degrees, so legacy code should continue to work as expected. Software rotation is also disabled by default for compatibility.)
 
 Display rotation can also be changed at runtime using the `lv_disp_set_rotation(disp, rot)` API.
 
 Support for software rotation is a new feature, so there may be some glitches/bugs depending on your configuration. If you encounter a problem please open an issue on [GitHub](https://github.com/lvgl/lvgl/issues).
 
 ### Decoupling the display refresh timer
-Normally the dirty (a.k.a invalid) areas are checked and redrawn in every `LV_DEF_REFR_PERIOD` milliseconds (set in `lv_hal_disp.h`).
+Normally the dirty (a.k.a invalid) areas are checked and redrawn in every `LV_DISP_DEF_REFR_PERIOD` milliseconds (set in `lv_conf.h`).
 However, in some cases you might need more control on when the display refreshing happen, for example to synchronize rendering with VSYNC or the TE signal.
 
 You can do this in the following way:
@@ -227,7 +225,7 @@ If you have multiple displays call `lv_disp_set_deafult(disp1);` to select the d
 
 Note that `lv_timer_handler()` and `_lv_disp_refr_timer()` can not run at the same time.
 
-If the performance monitor is enabled, the value of `LV_DEF_REFR_PERIOD` needs to be set to be consistent with the refresh period of the display to ensure that the statistical results are correct.
+If the performance monitor is enabled, the value of `LV_DISP_DEF_REFR_PERIOD` needs to be set to be consistent with the refresh period of the display to ensure that the statistical results are correct.
 
 ## Further reading
 

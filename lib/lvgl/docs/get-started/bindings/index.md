@@ -8,6 +8,5 @@
 
    micropython
    cpp
-   pikascript
 ```
 

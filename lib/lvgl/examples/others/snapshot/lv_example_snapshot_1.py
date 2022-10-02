@@ -1,5 +1,11 @@
 import gc
 import lvgl as lv
+from imagetools import get_png_info, open_png
+
+# Register PNG image decoder
+decoder = lv.img.decoder_create()
+decoder.info_cb = get_png_info
+decoder.open_cb = open_png
 
 # Measure memory usage
 gc.enable()

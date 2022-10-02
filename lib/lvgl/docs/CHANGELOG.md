@@ -1,62 +1,7 @@
 # Changelog
 
-## [v8.3.2](https://github.com/lvgl/lvgl/compare/v8.3.1...v8.3.2) 27 September 2022
 
-### Fixes
-
-- fix(fragment): fixed child fragment event dispatch [`3683`](https://github.com/lvgl/lvgl/pull/3683)
-- fix(sdl): clear streaming/target texture with FillRect [`3682`](https://github.com/lvgl/lvgl/pull/3682)
-- fix(sdl): transformation with alpha (#3576) [`3678`](https://github.com/lvgl/lvgl/pull/3678)
-- fix(draw_sw): fix image cache to access the freed stack space [`3584`](https://github.com/lvgl/lvgl/pull/3584)
-- fix(style): use compile time prop_cnt for const styles [`3609`](https://github.com/lvgl/lvgl/pull/3609)
-- fix(demo): can not found lvgl.h file [`3477`](https://github.com/lvgl/lvgl/pull/3477)
-- fix(ci) checkout lv_micropython release/v8 branch [`3524`](https://github.com/lvgl/lvgl/pull/3524)
-- fix(canvas): fix clipéping on transformation [`b884aba`](https://github.com/lvgl/lvgl/commit/b884abae26f3824b27783a85d18ed51e550347c1)
-- fix(draw): allow drawing outline with LV_DRAW_COMPLEX == 0 too [`ece3495`](https://github.com/lvgl/lvgl/commit/ece34950040e218fc73605a4e88f1060c2a274f8)
-- fix(colorwheel): fix updating color when using lv_colorwheel_set_hsv [`d59bba1`](https://github.com/lvgl/lvgl/commit/d59bba12db115afb4b6aa53eed2625221dfff2fd)
-- fix(slider): find the nearest value on click instead of floor [`dfd14fa`](https://github.com/lvgl/lvgl/commit/dfd14fa778aef25d0db61748a58aa9989ce5e2c8)
-- fix(draw): fix border drawing with thick borders [`d5b2a9b`](https://github.com/lvgl/lvgl/commit/d5b2a9b2562cbfa327bf0ec03c11d28576037a14)
-- fix(refr): fix true double double buffering logic with transparent screens [`8b605cc`](https://github.com/lvgl/lvgl/commit/8b605cc48224d0497cdd936fa77229e0c3d606d2)
-- fix(group): be sure obj is removed from its current group in lv_group_add_obj [`5156ee0`](https://github.com/lvgl/lvgl/commit/5156ee058d5de674a00ffd84d15d460de7f0e53b)
-- fix(style): add missing invalidation in lv_obj_remove_local_style_prop [`a0515ba`](https://github.com/lvgl/lvgl/commit/a0515ba30dd74b8b22a6709d334eb03782ee1a4d)
-
-### Docs
-
-- docs(draw) remove reference to old lv_fs_add_drv function [`3564`](https://github.com/lvgl/lvgl/pull/3564)
-- docs(disp): LV_COLOR_SCREEN_TRANSP remove dependency on LV_COLOR_DEPTH_32 as transparency is supported across all color depths [`3556`](https://github.com/lvgl/lvgl/pull/3556)
-
-### CI and tests
-
-- ci: protect test.c with #if LV_BUILD_TEST [`be485d7`](https://github.com/lvgl/lvgl/commit/be485d7605136d2a5d6a633c7cb5b7c525cae7ee)
-
-### Others
-
-- chore(rt-thread) backport fixes from v9 [`3604`](https://github.com/lvgl/lvgl/pull/3604)
-
-- chore: fix warnings [`7640950`](https://github.com/lvgl/lvgl/commit/76409502163ffe67cfbab9c7f24f2226cc8a5941)
-- remove accidentally added code [`5022476`](https://github.com/lvgl/lvgl/commit/5022476edc8676f2a6ef7b919d3578159edeef7c)
-
-## [v8.3.1](https://github.com/lvgl/lvgl/compare/v8.3.0...v8.3.1) 25 July 2022
-
-### Fixes
-
-- fix(led): add bg_color draw descriptors back to led draw event to support LV_DRAW_COMPLEX 0 [`3515`](https://github.com/lvgl/lvgl/pull/3515)
-- fix(slider): fix knob drawing in symmetrical mode [`2967172`](https://github.com/lvgl/lvgl/commit/2967172bee806e77da6ee2307c79e867af3f76bc)
-- fix(refr): fix lv_refr_get_top_obj [`9750c97`](https://github.com/lvgl/lvgl/commit/9750c97aff4dc3de80559b150852b829f006d6bf)
-- fix(arc): fix arc knob invalidation in SYMMETRICAL mode [`a283273`](https://github.com/lvgl/lvgl/commit/a283273bd27599dae6b044a941b6591ad45e059b)
-
-### Examples
-
-- example(freetype): Update the Micropython example to use the Lato font [`71913d3`](https://github.com/lvgl/lvgl/commit/71913d300dde25d1b87d1b44fa1fa47854defd59)
-- example(freetype): replace the arial font with lato to avoid licensing issues [`8544cc3`](https://github.com/lvgl/lvgl/commit/8544cc38062d9c817013bbe6aedbb47112e580ad)
-
-### Docs
-
-- docs(readme): fix LVGL version typo (8.3.0) [`3462`](https://github.com/lvgl/lvgl/pull/3462)
-- docs(tasmota): support LVGL 8.3.0 (#3511) [`62662f6`](https://github.com/lvgl/lvgl/commit/62662f68e9cf90adcb96d42030eca5fa135b96a5)
-
-
-## [v8.3.0](https://github.com/lvgl/lvgl/compare/v8.2.0...v8.3.0) 6 July 2022
+## [v8.2.0](https://github.com/lvgl/lvgl/compare/v8.2.0...v8.2.0) 6 July 2022
 
 
 ### Overview
@@ -65,7 +10,7 @@
 - **inherit and initial style properties** Besides setting "normal values" for style properties now you can set them to `inherit` (inherit the parent's value) and `initial` (set the system default). See more [here](https://docs.lvgl.io/master/overview/style.html#forced-value-inheritance-default-value)
 - **NXP-PXP and VGLITE GPU support** The support for NXP GPUs are added again
 - **Color font support** You can use emojis and images in texts with this great new features. See more [here](https://docs.lvgl.io/master/others/imgfont.html).
-- **ARM2D GPU support** Get support for Arm's Microcontroller 2D Graphics Acceleration, e.g. Helium based acceleration, DMA-350 based acceleration etc.
+- **ARM2D GPU support** Get support for ARM's own GPU.
 - **PubSub messaging** A publisher-subscriber based messaging system is added to make communication between components easier. See more [here](https://docs.lvgl.io/master/others/msg.html).
 - **Pinyin IME** Add support for Pinyin IME Chinese input. See more [here](https://docs.lvgl.io/master/others/ime_pinyin.html).
 - **render_start_cb** A new callback is added to `lv_disp_drv_t` to indicate when the rendering starts. It's useful to make synchronization, e.g. wait for a TE signal.
@@ -1718,7 +1663,7 @@ The main new features of v7.4 are run-time font loading, style caching and arc k
 ## v7.0.0 (18.05.2020)
 
 ### Documentation
-The docs for v7 is available at https://docs.lvgl.io/7.11/index.html
+The docs for v7 is available at https://docs.littlevgl.com/v7/en/html/index.html
 
 ### Legal changes
 
@@ -1757,7 +1702,7 @@ As part of these updates, a lot of objects were reworked and the APIs have been 
 - *value* display a text which is stored in the style. It can be used e.g. as a light-weighted text on buttons too.
 - *margin*: similar to *padding* but used to keep space outside the object
 
-Read the [Style](https://docs.lvgl.io/7.11/overview/style.html) section of the documentation to learn how the new styles system works.
+Read the [Style](https://docs.littlevgl.com/v7/en/html/overview/style.html) section of the documentation to learn how the new styles system works.
 
 ### GPU integration
 To better utilize GPUs, from this version GPU usage can be integrated into LVGL. In `lv_conf.h` any supported GPUs can be enabled with a single configuration option.

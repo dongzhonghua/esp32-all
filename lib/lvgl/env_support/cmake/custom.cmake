@@ -4,7 +4,7 @@ option(LV_LVGL_H_INCLUDE_SIMPLE
 
 # Option to define LV_CONF_INCLUDE_SIMPLE, default: ON
 option(LV_CONF_INCLUDE_SIMPLE
-       "Use #include \"lv_conf.h\" instead of #include \"../../lv_conf.h\"" ON)
+       "Simple include of \"lv_conf.h\" and \"lv_drv_conf.h\"" ON)
 
 # Option to set LV_CONF_PATH, if set parent path LV_CONF_DIR is added to
 # includes
@@ -18,11 +18,16 @@ file(GLOB_RECURSE SOURCES ${LVGL_ROOT_DIR}/src/*.c)
 file(GLOB_RECURSE EXAMPLE_SOURCES ${LVGL_ROOT_DIR}/examples/*.c)
 file(GLOB_RECURSE DEMO_SOURCES ${LVGL_ROOT_DIR}/demos/*.c)
 
-add_library(lvgl ${SOURCES})
+if (BUILD_SHARED_LIBS)
+  add_library(lvgl SHARED ${SOURCES})
+else()
+  add_library(lvgl STATIC ${SOURCES})
+endif()
+
 add_library(lvgl::lvgl ALIAS lvgl)
-add_library(lvgl_examples ${EXAMPLE_SOURCES})
+add_library(lvgl_examples STATIC ${EXAMPLE_SOURCES})
 add_library(lvgl::examples ALIAS lvgl_examples)
-add_library(lvgl_demos ${DEMO_SOURCES})
+add_library(lvgl_demos STATIC ${DEMO_SOURCES})
 add_library(lvgl::demos ALIAS lvgl_demos)
 
 target_compile_definitions(

@@ -1,3 +1,10 @@
+from imagetools import get_png_info, open_png
+
+# Register PNG image decoder
+decoder = lv.img.decoder_create()
+decoder.info_cb = get_png_info
+decoder.open_cb = open_png
+
 # Create an image from the png file
 try:
     with open('../../assets/img_star.png','rb') as f:
@@ -32,7 +39,7 @@ def event_cb(e):
         # Change the draw descriptor the 3rd button
 
         elif dsc.id == 2:
-            dsc.rect_dsc.radius = lv.RADIUS_CIRCLE
+            dsc.rect_dsc.radius = lv.RADIUS.CIRCLE
             if obj.get_selected_btn() == dsc.id:
                 dsc.rect_dsc.bg_color = lv.palette_darken(lv.PALETTE.RED, 3)
             else:

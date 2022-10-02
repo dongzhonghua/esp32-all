@@ -9,7 +9,7 @@ You should read this first to get a general impression and read the detailed [Po
 Instead of porting LVGL to embedded hardware straight away, it's highly recommended to get started in a simulator first.
 
 LVGL is ported to many IDEs to be sure you will find your favorite one.
-Go to the [Simulators](/get-started/platforms/pc-simulator) section to get ready-to-use projects that can be run on your PC.
+Go to the [Simulators](/get-started/pc-simulator) section to get ready-to-use projects that can be run on your PC.
 This way you can save the time of porting for now and get some experience with LVGL immediately.
 
 ## Add LVGL into your project
@@ -115,7 +115,7 @@ Along with the basic attributes, widgets can have type specific parameters which
 lv_slider_set_value(slider1, 70, LV_ANIM_ON);
 ```
 
-To see the full API visit the documentation of the widgets or the related header file (e.g. [lvgl/src/widgets/slider/lv_slider.h](https://github.com/lvgl/lvgl/blob/master/src/widgets/slider/lv_slider.h)).
+To see the full API visit the documentation of the widgets or the related header file (e.g. [lvgl/src/widgets/lv_slider.h](https://github.com/lvgl/lvgl/blob/master/src/widgets/lv_slider.h)).
 
 
 
@@ -152,7 +152,7 @@ To learn all features of the events go to the [Event overview](/overview/event) 
 
 ### Parts
 Widgets might be built from one or more *parts*. For example, a button has only one part called `LV_PART_MAIN`.
-However, a [Slider](/widgets/slider) has `LV_PART_MAIN`, `LV_PART_INDICATOR` and `LV_PART_KNOB`.
+However, a [Slider](/widgets/core/slider) has `LV_PART_MAIN`, `LV_PART_INDICATOR` and `LV_PART_KNOB`.
 
 By using parts you can apply different styles to sub-elements of a widget. (See below)
 
@@ -251,7 +251,7 @@ The theme for your application is a compile time configuration set in `lv_conf.h
 ```
 
 ## Micropython
-Learn more about [Micropython](/get-started/bindings/micropython).
+Learn more about [Micropython](/get-started/micropython).
 ```python
 # Create a Button and a Label
 scr = lv.obj()

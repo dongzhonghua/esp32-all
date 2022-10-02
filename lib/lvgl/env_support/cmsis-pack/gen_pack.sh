@@ -46,14 +46,14 @@ PACK_DIRS="
   ../../src
   ../../docs
   ../../demos
-  ../../env_support/pikascript
 "
 
 
 # Specify file names to be added to pack base directory
 PACK_BASE_FILES="
-  ../../docs/LICENCE.txt
+  ../../LICENCE.txt
   ../../README.md
+  ../../README_zh.md
   ../../lvgl.h
   lv_conf_cmsis.h
   lv_cmsis_pack.txt
