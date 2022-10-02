@@ -5,7 +5,7 @@
 #include "network.h"
 #include "ota.h"
 #include "ssd1306.h"
-#include "utils/bilibili.h"
+#include "utils/pic.h"
 #include "utils/common_utils.h"
 
 IMU mpu;
