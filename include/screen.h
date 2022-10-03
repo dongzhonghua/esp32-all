@@ -4,19 +4,15 @@
 
 #define LCD_BL_PWM_CHANNEL 0
 
+class Display {
+ private:
+ public:
+  static void init();
+  static void routine();
+  static void setBackLight(float);
 
-class Display
-{
-private:
-
-
-public:
-    static void init();
-    static void routine();
-    static void setBackLight(float);
-
-    static void demoInit();
+  static void demoInit();
 };
+void event_handler(lv_event_t *e);
 
-
-#endif //SCREEN_H
+#endif  // SCREEN_H

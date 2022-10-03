@@ -36,6 +36,51 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area,
   lv_disp_flush_ready(disp);
 }
 
+lv_indev_t *indev_encoder;
+int32_t encoder_diff;
+lv_indev_state_t encoder_state;
+long last_update_time = 0;
+int interval = 200;
+bool but_flag = false;
+
+static void touch_read_update() {
+  if (millis() - last_update_time > interval) {
+    if (touchRead(12) < 40) {
+      encoder_state = LV_INDEV_STATE_PR;  //按下
+    } else {
+      encoder_state = LV_INDEV_STATE_REL;  //松开
+    }
+
+    if (touchRead(14) < 40 && but_flag) {
+      encoder_diff--;
+      but_flag = false;
+    } else if (touchRead(27) < 40 && but_flag) {
+      encoder_diff++;
+      but_flag = false;
+    } else {
+      but_flag = true;
+    }
+    last_update_time = millis();
+  }
+}
+
+static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
+  touch_read_update();
+
+  data->enc_diff = encoder_diff;
+  data->state = encoder_state;
+
+  Serial.print("===encoder_read: ");
+  Serial.print("encoder_diff: ");
+  Serial.print(encoder_diff);
+
+  Serial.print(", encoder_state: ");
+  Serial.println(encoder_state);
+
+
+  encoder_diff = 0;
+}
+
 #ifdef TOUCH_CS
 /*Read the touchpad*/
 void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
@@ -92,13 +137,12 @@ void Display::init() {
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
-  // 这里搞清楚干什么的
-  /*Initialize the (dummy) input device driver*/
+  /*Register a encoder input device*/
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  // indev_drv.read_cb = my_touchpad_read;
-  lv_indev_drv_register(&indev_drv);
+  indev_drv.type = LV_INDEV_TYPE_ENCODER;
+  indev_drv.read_cb = encoder_read;
+  indev_encoder = lv_indev_drv_register(&indev_drv);
 }
 
 void Display::routine() { lv_task_handler(); }
@@ -110,11 +154,66 @@ void Display::setBackLight(float duty) {
 }
 
 void Display::demoInit() {
-#if 1
+#if 0
   /* Create simple label */
   lv_obj_t *label = lv_label_create(lv_scr_act());
   lv_label_set_text(label, "hello world!");
   lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+
+  // button
+  lv_obj_t *btn1 = lv_btn_create(lv_scr_act());
+  lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
+  lv_obj_align(btn1, LV_ALIGN_CENTER, 40, -40);  //设置为中心位置的下面40个像素
+
+  label = lv_label_create(btn1);
+  lv_label_set_text(label, "Button");
+  lv_obj_center(label);
+
+  lv_obj_t *btn2 = lv_btn_create(lv_scr_act());
+  lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
+  lv_obj_align(btn2, LV_ALIGN_CENTER, 40, 40);
+  lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
+  lv_obj_set_height(btn2, LV_SIZE_CONTENT);
+
+  label = lv_label_create(btn2);
+  lv_label_set_text(label, "Toggle");
+  lv_obj_center(label);
+
+  // 开关
+  lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
+  lv_obj_align(sw, LV_ALIGN_CENTER, -40, 40);
+  lv_obj_add_event_cb(sw, event_handler, LV_EVENT_ALL,
+                      NULL);               //将该控件添加到事件当中
+  lv_obj_add_state(sw, LV_STATE_CHECKED);  //打开开关
+
+  // 复选框
+  lv_obj_t *cb = lv_checkbox_create(lv_scr_act());
+  lv_checkbox_set_text(cb, "book");             //设置控件名称
+  lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
+  lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);  //为控件添加事件
+
+  // 文本框
+  // lv_obj_t *ta = lv_textarea_create(lv_scr_act());
+  // lv_textarea_set_one_line(ta, true);         //设置为单行输入
+  // lv_obj_align(ta, LV_ALIGN_TOP_MID, 0, 0);  //顶部居中对齐
+  // lv_obj_add_state(ta, LV_STATE_FOCUSED);   /*To be sure the cursor is
+  // visible*/ lv_textarea_add_text(ta, "hello world");  //显示指定内容
+
+  // 画线
+  static lv_point_t line_points[] = {{0, 0}, {10, 10}};
+  lv_obj_t *line1;
+  line1 = lv_line_create(lv_scr_act());
+  lv_line_set_points(line1, line_points, 5); /*Set the points*/
+  lv_obj_center(line1);
+
+  lv_group_t *group = lv_group_create();
+  lv_group_add_obj(group, label);
+  lv_group_add_obj(group, btn1);
+  lv_group_add_obj(group, btn2);
+  lv_group_add_obj(group, sw);
+  lv_group_add_obj(group, cb);
+  lv_indev_set_group(indev_encoder, group);
+
 #else
   /* Try an example from the lv_examples Arduino library
      make sure to include it as written above.
@@ -137,4 +236,14 @@ void Display::demoInit() {
   // lv_demo_stress();             // seems to be OK
 #endif
   Serial.println("lvgl demo Setup done");
+}
+
+void event_handler(lv_event_t *e) {
+  Serial.println("event_handler---------\n");
+  lv_event_code_t code = lv_event_get_code(e);
+  if (code == LV_EVENT_CLICKED) {
+    Serial.println("Clicked\n");
+  } else if (code == LV_EVENT_VALUE_CHANGED) {
+    Serial.println("Toggled\n");
+  }
 }
