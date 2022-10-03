@@ -92,3 +92,39 @@ void chip_info(void) {
   Serial.printf("get Cycle Count = %u\n", ESP.getCycleCount());
   Serial.printf("get SdkVersion = %s\n", ESP.getSdkVersion());
 }
+
+void set_up_buzzer() {
+  ledcSetup(channel, freq, resolution);
+  ledcAttachPin(33, channel);
+  ledcWrite(channel, 0);
+}
+
+void buzzer_fail() {
+  ledcWrite(channel, 200);
+  delay(500);
+  ledcWrite(channel, 0);
+}
+
+void buzzer_success() {
+  ledcWrite(channel, 100);
+  delay(100);
+  ledcWrite(channel, 0);
+  delay(50);
+  ledcWrite(channel, 100);
+  delay(100);
+  ledcWrite(channel, 0);
+}
+
+void got_touch() {
+  Serial.print("12: ");
+  Serial.println(touchRead(12));
+}
+void touch_read() {
+  // Serial.print("12: ");
+  // Serial.println(touchRead(12));
+  // Serial.print("14: ");
+  // Serial.println(touchRead(14));
+  // Serial.print("27: ");
+  // Serial.println(touchRead(27));
+  touchAttachInterrupt(12, got_touch, 40);
+}
