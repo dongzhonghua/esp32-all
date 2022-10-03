@@ -3,8 +3,8 @@
 
 #define ST7735_DRIVER     // Configure all registers
 
-#define TFT_WIDTH  128
-#define TFT_HEIGHT 160
+#define TFT_WIDTH  160
+#define TFT_HEIGHT 128
 
 // #define ST7735_INITB
 // #define ST7735_GREENTAB
@@ -26,7 +26,7 @@
 #define TFT_MISO 19
 #define TFT_MOSI 23
 #define TFT_SCLK 18
-//#define TFT_CS    21 // Not defined here, chip select is managed by sketch
+#define TFT_CS    21 // Not defined here, chip select is managed by sketch
 #define TFT_DC    2
 #define TFT_RST   4  // Connect reset to ensure display initialises
 #define TFT_BLK   5  // 背光

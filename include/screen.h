@@ -14,6 +14,8 @@ public:
     static void init();
     static void routine();
     static void setBackLight(float);
+
+    static void demoInit();
 };
 
 

@@ -5,8 +5,8 @@
 #define ST7735_DRIVER
 
 
-#define TFT_WIDTH  80
-#define TFT_HEIGHT 160
+#define TFT_WIDTH  128
+#define TFT_HEIGHT 128
 
 
 #define ST7735_GREENTAB160x80
@@ -21,9 +21,11 @@
 #define TFT_MISO 19
 #define TFT_MOSI 23
 #define TFT_SCLK 18
-#define TFT_CS    15  // Chip select control pin
 #define TFT_DC    2  // Data Command control pin
 #define TFT_RST   4  // Reset pin (could connect to RST pin)
+
+#define TFT_CS    21 // Not defined here, chip select is managed by sketch
+#define TFT_BLK   5  // 背光
 //#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
 #else
 // Display GND       to NodeMCU pin GND (0V)
@@ -48,5 +50,5 @@
 #define SMOOTH_FONT
 
 
-//#define SPI_FREQUENCY  20000000
-  #define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3
+#define SPI_FREQUENCY  20000000
+  // #define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3

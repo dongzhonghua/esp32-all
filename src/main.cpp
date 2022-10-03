@@ -9,8 +9,6 @@
 #include "utils/common_utils.h"
 #include "utils/pic.h"
 
-// #include <lv_demo.h>
-
 
 IMU mpu;
 Network wifi;
@@ -26,6 +24,7 @@ void setup() {
 
   screen.init();
 
+  screen.demoInit();
   // ---ota初始化，上面写具体逻辑---
   // ota.init();
 }

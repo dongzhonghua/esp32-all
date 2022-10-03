@@ -4,24 +4,20 @@
 #define ST7735_DRIVER
 
 
-#define TFT_WIDTH  128
-#define TFT_HEIGHT 160
+#define TFT_WIDTH  160
+#define TFT_HEIGHT 128
 
 
 #define ST7735_REDTAB
 
-// For ST7735, ST7789 and ILI9341 ONLY, define the colour order IF the blue and red are swapped on your display
-// Try ONE option at a time to find the correct colour order for your display
+#define TFT_MISO 19
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+#define TFT_DC    2  // Data Command control pin
+#define TFT_RST   4  // Reset pin (could connect to RST pin)
 
-//  #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
-//  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
-
-// For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
-#define TFT_CS   PIN_D8  // Chip select control pin D8
-#define TFT_DC   PIN_D3  // Data Command control pin
-#define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
-//#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
-
+#define TFT_CS    21 // Not defined here, chip select is managed by sketch
+#define TFT_BLK   5  // 背光
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters

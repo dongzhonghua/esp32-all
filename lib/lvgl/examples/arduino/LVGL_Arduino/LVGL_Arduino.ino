@@ -111,7 +111,7 @@ void setup()
     indev_drv.read_cb = my_touchpad_read;
     lv_indev_drv_register( &indev_drv );
 
-#if 0
+#if 1
     /* Create simple label */
     lv_obj_t *label = lv_label_create( lv_scr_act() );
     lv_label_set_text( label, LVGL_Arduino.c_str() );
