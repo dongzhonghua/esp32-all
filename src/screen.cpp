@@ -2,7 +2,7 @@
 
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include <lv_demos.h>
+// #include <lv_demos.h>
 #include <lvgl.h>
 
 /*
@@ -13,13 +13,14 @@ path/to/Arduino/libraries/TFT_eSPI/User_Setups/Setup24_ST7789.h
 static const uint16_t screenWidth = 160;
 static const uint16_t screenHeight = 128;
 
-static lv_disp_draw_buf_t draw_buf;
+static lv_disp_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-void my_print(const char *buf) {
-  Serial.printf(buf);
+void my_print(lv_log_level_t level, const char *file, uint32_t line,
+              const char *fun, const char *dsc) {
+  Serial.printf("%s@%d %s->%s\r\n", file, line, fun, dsc);
   Serial.flush();
 }
 
@@ -64,7 +65,7 @@ static void touch_read_update() {
   }
 }
 
-static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
+static bool encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
   touch_read_update();
 
   data->enc_diff = encoder_diff;
@@ -77,8 +78,8 @@ static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
   Serial.print(", encoder_state: ");
   Serial.println(encoder_state);
 
-
   encoder_diff = 0;
+  return false;
 }
 
 #ifdef TOUCH_CS
@@ -125,7 +126,7 @@ void Display::init() {
   tft.setTouch(calData);
 #endif
 
-  lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * 10);
+  lv_disp_buf_init(&draw_buf, buf, NULL, screenWidth * 10);
 
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
@@ -134,7 +135,7 @@ void Display::init() {
   disp_drv.hor_res = screenWidth;
   disp_drv.ver_res = screenHeight;
   disp_drv.flush_cb = my_disp_flush;
-  disp_drv.draw_buf = &draw_buf;
+  disp_drv.buffer = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
   /*Register a encoder input device*/
@@ -154,65 +155,18 @@ void Display::setBackLight(float duty) {
 }
 
 void Display::demoInit() {
-#if 0
+#if 1
   /* Create simple label */
-  lv_obj_t *label = lv_label_create(lv_scr_act());
-  lv_label_set_text(label, "hello world!");
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_t *label;
 
-  // button
-  lv_obj_t *btn1 = lv_btn_create(lv_scr_act());
-  lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
-  lv_obj_align(btn1, LV_ALIGN_CENTER, 40, -40);  //设置为中心位置的下面40个像素
+  lv_obj_t *btn1 = lv_btn_create(lv_scr_act(), NULL); /*创建btn1*/
+  lv_obj_set_event_cb(btn1, event_handler);           /*设置btn1回调函数*/
+  lv_obj_align(btn1, NULL, LV_ALIGN_CENTER, 0, -40);
 
-  label = lv_label_create(btn1);
+  label = lv_label_create(btn1, NULL); /*btn1内创建label*/
   lv_label_set_text(label, "Button");
-  lv_obj_center(label);
-
-  lv_obj_t *btn2 = lv_btn_create(lv_scr_act());
-  lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
-  lv_obj_align(btn2, LV_ALIGN_CENTER, 40, 40);
-  lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
-  lv_obj_set_height(btn2, LV_SIZE_CONTENT);
-
-  label = lv_label_create(btn2);
-  lv_label_set_text(label, "Toggle");
-  lv_obj_center(label);
-
-  // 开关
-  lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
-  lv_obj_align(sw, LV_ALIGN_CENTER, -40, 40);
-  lv_obj_add_event_cb(sw, event_handler, LV_EVENT_ALL,
-                      NULL);               //将该控件添加到事件当中
-  lv_obj_add_state(sw, LV_STATE_CHECKED);  //打开开关
-
-  // 复选框
-  lv_obj_t *cb = lv_checkbox_create(lv_scr_act());
-  lv_checkbox_set_text(cb, "book");             //设置控件名称
-  lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
-  lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);  //为控件添加事件
-
-  // 文本框
-  // lv_obj_t *ta = lv_textarea_create(lv_scr_act());
-  // lv_textarea_set_one_line(ta, true);         //设置为单行输入
-  // lv_obj_align(ta, LV_ALIGN_TOP_MID, 0, 0);  //顶部居中对齐
-  // lv_obj_add_state(ta, LV_STATE_FOCUSED);   /*To be sure the cursor is
-  // visible*/ lv_textarea_add_text(ta, "hello world");  //显示指定内容
-
-  // 画线
-  static lv_point_t line_points[] = {{0, 0}, {10, 10}};
-  lv_obj_t *line1;
-  line1 = lv_line_create(lv_scr_act());
-  lv_line_set_points(line1, line_points, 5); /*Set the points*/
-  lv_obj_center(line1);
-
-  lv_group_t *group = lv_group_create();
-  lv_group_add_obj(group, label);
-  lv_group_add_obj(group, btn1);
-  lv_group_add_obj(group, btn2);
-  lv_group_add_obj(group, sw);
-  lv_group_add_obj(group, cb);
-  lv_indev_set_group(indev_encoder, group);
+  printf("%x,btn1:%d\n", btn1, lv_btn_get_state(btn1));
+  // button
 
 #else
   /* Try an example from the lv_examples Arduino library
@@ -229,7 +183,7 @@ void Display::demoInit() {
    *
    */
   // lv_demo_widgets();  // OK
-  lv_demo_benchmark();  // OK
+  // lv_demo_benchmark();  // OK
   // lv_demo_keypad_encoder();     // works, but I haven't an encoder
   // lv_demo_music();              // NOK
   // lv_demo_printer();
@@ -238,12 +192,11 @@ void Display::demoInit() {
   Serial.println("lvgl demo Setup done");
 }
 
-void event_handler(lv_event_t *e) {
-  Serial.println("event_handler---------\n");
-  lv_event_code_t code = lv_event_get_code(e);
-  if (code == LV_EVENT_CLICKED) {
-    Serial.println("Clicked\n");
-  } else if (code == LV_EVENT_VALUE_CHANGED) {
-    Serial.println("Toggled\n");
+void event_handler(lv_obj_t *obj, lv_event_t event) {
+  if (event == LV_EVENT_CLICKED) {
+     Serial.println("Clicked\n");
+  } else if (event == LV_EVENT_VALUE_CHANGED) {
+    printf("Toggled\n");
   }
+  printf("%x,:%d\n", obj, lv_btn_get_state(obj));
 }

@@ -13,6 +13,6 @@ class Display {
 
   static void demoInit();
 };
-void event_handler(lv_event_t *e);
+void event_handler(lv_obj_t *obj, lv_event_t event);
 
 #endif  // SCREEN_H
