@@ -154,7 +154,7 @@ void Display::setBackLight(float duty) {
 }
 
 void Display::demoInit() {
-#if 0
+#if 1
   /* Create simple label */
   lv_obj_t *label = lv_label_create(lv_scr_act());
   lv_label_set_text(label, "hello world!");
@@ -229,7 +229,7 @@ void Display::demoInit() {
    *
    */
   // lv_demo_widgets();  // OK
-  lv_demo_benchmark();  // OK
+  // lv_demo_benchmark();  // OK
   // lv_demo_keypad_encoder();     // works, but I haven't an encoder
   // lv_demo_music();              // NOK
   // lv_demo_printer();
