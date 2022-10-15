@@ -82,11 +82,9 @@ https://gitee.com/kq666/Peak
 
 **read_cb** (indev_drv.read_cb)是一个函数指针，将定期调用该函数指针以报告输入设备的当前状态。它还可以缓冲数据并在没有更多数据要读取时返回 `false` ，或者在缓冲区不为空时返回 `true` 。
 
-**const**char index_html**[**] PROGMEM **=** R"**rawliteral**(
+https://www.bilibili.com/read/cv15906117
 
-rawliteral
-
-## 显示图片
+## lvgl显示图片
 
 以下网址图片转换成c格式的map：https://lvgl.io/tools/imageconverter
 
@@ -98,3 +96,16 @@ rawliteral
   LV_IMG_DECLARE(yx1_160x128);
   lv_img_set_src(img_test, &yx1_160x128);
 ```
+
+
+## lvgl使用gui-guider生成代码
+
+这里说的比较详细
+
+https://www.bilibili.com/read/cv15949056
+
+https://www.bilibili.com/read/cv15906117
+
+主要就是把custom和generated复制过来，然后改一下include。
+
+现在已经可以运行计数的小项目了，但是目前存在的一个问题就是lvgl的焦点如果一直按up或者down，他不会在当前页面循环，而是就没了。这个需要解决一下。

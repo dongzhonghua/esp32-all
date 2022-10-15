@@ -4,8 +4,12 @@
 #include <TFT_eSPI.h>
 #include <lv_demos.h>
 #include <lvgl.h>
+
+#include "events_init.h"
+#include "gui_guider.h"
 #include "img/yx1_160x128.h"
 #include "img/yx2_160x128.h"
+
 /*
 TFT pins should be set in
 path/to/Arduino/libraries/TFT_eSPI/User_Setups/Setup24_ST7789.h
@@ -37,7 +41,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area,
   lv_disp_flush_ready(disp);
 }
 
-lv_indev_t *indev_encoder;
+static lv_indev_t *indev_encoder;
 int32_t encoder_diff;
 lv_indev_state_t encoder_state;
 long last_update_time = 0;
@@ -155,8 +159,21 @@ void Display::setBackLight(float duty) {
   ledcWrite(LCD_BL_PWM_CHANNEL, (int)(duty * 255));
 }
 
+lv_ui guider_ui;
+
 void Display::demoInit() {
 #if 1
+
+  // group放到最开始后面的组件默认都会加入到这个group
+  lv_group_t *group = lv_group_create();
+  lv_group_set_default(group);
+  lv_indev_set_group(indev_encoder, group);
+
+  // gui guider生成的ui
+  setup_ui(&guider_ui);
+  events_init(&guider_ui);
+
+
   /* Create simple label */
   // lv_obj_t *label = lv_label_create(lv_scr_act());
   // lv_label_set_text(label, "hello world!");
@@ -182,27 +199,26 @@ void Display::demoInit() {
   // lv_label_set_text(label, "Toggle");
   // lv_obj_center(label);
 
-  // 开关
-  lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
-  lv_obj_align(sw, LV_ALIGN_CENTER, -40, 40);
-  lv_obj_add_event_cb(sw, event_handler, LV_EVENT_ALL,
-                      NULL);               //将该控件添加到事件当中
-  lv_obj_add_state(sw, LV_STATE_CHECKED);  //打开开关
+  // // 开关
+  // lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
+  // lv_obj_align(sw, LV_ALIGN_CENTER, -40, 40);
+  // lv_obj_add_event_cb(sw, event_handler, LV_EVENT_ALL,
+  //                     NULL);               //将该控件添加到事件当中
+  // lv_obj_add_state(sw, LV_STATE_CHECKED);  //打开开关
 
-  // 复选框
-  lv_obj_t *cb = lv_checkbox_create(lv_scr_act());
-  lv_checkbox_set_text(cb, "book");             //设置控件名称
-  lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
-  lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);  //为控件添加事件
+  // // 复选框
+  // lv_obj_t *cb = lv_checkbox_create(lv_scr_act());
+  // lv_checkbox_set_text(cb, "book");             //设置控件名称
+  // lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
+  // lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);
+  // //为控件添加事件
 
-  // 加载图片
-  lv_obj_t *img_test = lv_img_create(lv_scr_act());
-  LV_IMG_DECLARE(yx1_160x128);
-  LV_IMG_DECLARE(yx2_160x128);
+  // // 加载图片
+  // lv_obj_t *img_test = lv_img_create(lv_scr_act());
+  // LV_IMG_DECLARE(yx1_160x128);
+  // LV_IMG_DECLARE(yx2_160x128);
 
-  lv_img_set_src(img_test, &yx1_160x128);
-
-
+  // lv_img_set_src(img_test, &yx1_160x128);
 
   // 文本框
   // lv_obj_t *ta = lv_textarea_create(lv_scr_act());
@@ -218,13 +234,18 @@ void Display::demoInit() {
   // lv_line_set_points(line1, line_points, 5); /*Set the points*/
   // lv_obj_center(line1);
 
-  lv_group_t *group = lv_group_create();
   // lv_group_add_obj(group, label);
   // lv_group_add_obj(group, btn1);
   // lv_group_add_obj(group, btn2);
-  lv_group_add_obj(group, sw);
-  lv_group_add_obj(group, cb);
-  lv_indev_set_group(indev_encoder, group);
+  // lv_group_add_obj(group, sw);
+  // lv_group_add_obj(group, cb);
+
+  // lv_group_add_obj(group, (&guider_ui)->screen);
+  // lv_group_add_obj(group, (&guider_ui)->screen_minus);
+  // lv_group_add_obj(group, (&guider_ui)->screen_minus_label);
+  // lv_group_add_obj(group, (&guider_ui)->screen_plus);
+  // lv_group_add_obj(group, (&guider_ui)->screen_plus_label);
+  // lv_group_add_obj(group, (&guider_ui)->screen_counter);
 
 #else
   /* Try an example from the lv_examples Arduino library
