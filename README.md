@@ -39,20 +39,22 @@ https://www.eecso.com/test/zimo/?word=%D6%D9
 
 https://gitee.com/kq666/Peak
 
-## TFT_eSPI + lvgl
+## TFT_eSPI
 
 ### 1. 下载
 
   GitHub下载对应的工程就可以，直接搜名字。
-  需要下载lvgl、TFT_eSPI、TFT_Touch
+
+https://github.com/Bodmer/TFT_eSPI
+
+git clone https://github.com/Bodmer/TFT_eSPI.git
+
+  需要下载TFT_eSPI、TFT_Touch
+
+  a. TFT_eSPI改的地方也不多。主要改User_Setup_Select.h和对应的驱动的头文件。io口的定义都在相应的驱动头文件里修改。
 
 ### 2. 配置
 
-  a. lvgl，把lv_conf_template.h复制一份到lib根目录下，把enable打开。
-  b. lvgl/demos放到lib目录下。对应的include需要改一下，根据编译报错改一下就可以。
-  c. lvgl总之就是改一下名字，移动目录并且改一下配置。不需要改哪里的代码就可以直接用。
-  d. TFT_eSPI改的地方也不多。主要改User_Setup_Select.h和对应的驱动的头文件。io口的定义都在相应的驱动头文件里修改。
-  e. 修改完上述地方，就可以跑demo了，把examples/arduino/LVGL_Arduino.ino复制到main文件里。然后改一下报错或者宽高等地方，之后上传应该就可以正常显示了。
 
 ### 3. 接线
 
@@ -69,7 +71,25 @@ https://gitee.com/kq666/Peak
 #define TFT_BLK   5  // 背光
 ```
 
-### 4. 输入设备
+## lvgl
+
+### 1. 下载
+
+  GitHub下载对应的工程就可以，直接搜名字。
+  需要下载lvgl
+
+### 2. 配置
+
+  a. lvgl，把lv_conf_template.h复制一份到lib根目录下，把enable打开。
+  b. lvgl/demos放到lib目录下。对应的include需要改一下，根据编译报错改一下就可以。
+  c. lvgl总之就是改一下名字，移动目录并且改一下配置。不需要改哪里的代码就可以直接用。
+  d. 修改完上述地方，就可以跑demo了，把examples/arduino/LVGL_Arduino.ino复制到main文件里。然后改一下报错或者宽高等地方，之后上传应该就可以正常显示了。
+
+lvgl的配置应该只需要改conf里面的就可以。没什么复杂的东西。
+
+照着LVGL_Arduino写就可以。这个项目是采用编码器的方式指定输入设备，代码也比较清晰。
+
+### 3. 输入设备
 
 要设置输入设备，必须初始化 `lv_indev_drv_t` 变量：
 
@@ -96,7 +116,6 @@ https://www.bilibili.com/read/cv15906117
   LV_IMG_DECLARE(yx1_160x128);
   lv_img_set_src(img_test, &yx1_160x128);
 ```
-
 
 ## lvgl使用gui-guider生成代码
 
