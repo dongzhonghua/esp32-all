@@ -20,6 +20,8 @@ class Network {
   NTPClient* timeClient_;
 
  public:
+  // 这类对象一个普遍的特点就是都有一个init函数，其实可以都放到构造函数里面来做。
+  // 但是不这么做的原因是有时候我初始化了一个对象，但是我不想初始化里面的资源
   void init(const String& ssid = "dzh", const String& password = "dzhyx123");
   unsigned int getBilibiliFans(const String& url);
   String openWeather();

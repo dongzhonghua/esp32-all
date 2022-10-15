@@ -1,9 +1,11 @@
 #include "imu.h"
 
 void IMU::init() {
-  if (!imu_.begin()) {
-    Serial.println("Sensor init failed");
-    while (1) yield();
+  auto start = millis();
+  Serial.println("init MPU6050...");
+  if (!imu_.begin() && millis() - start > 10000) {
+    delay(10);
+    Serial.print(".");
   }
   Serial.println("MPU6050 succeed...");
 }
@@ -61,3 +63,42 @@ float IMU::getGyroX() { return gx_; }
 float IMU::getGyroY() { return gy_; }
 
 float IMU::getGyroZ() { return gz_; }
+
+float IMU::getTemperature() { return temperature_; }
+
+String IMU::getGyroReadings() {
+  DynamicJsonDocument readings(128);
+  if (abs(gx_) > gyro_x_error_) {
+    gyro_x_ += gx_ / 20.0;
+  }
+
+  if (abs(gy_) > gyro_y_error_) {
+    gyro_y_ += gy_ / 20.0;
+  }
+
+  if (abs(gz_) > gyro_x_error_) {
+    gyro_z_ += gz_ / 20.0;
+  }
+
+  readings["gyroX"] = String(gyro_x_);
+  readings["gyroY"] = String(gyro_y_);
+  readings["gyroZ"] = String(gyro_z_);
+
+  String gyroString = "";
+  serializeJson(readings, gyroString);
+  return gyroString;
+}
+
+String IMU::getAccReadings() {
+  DynamicJsonDocument readings(128);
+
+  // 读取当前加速度计的值
+  readings["accX"] = String(ax_);
+  readings["accY"] = String(ay_);
+  readings["accZ"] = String(az_);
+  String accString = "";
+  serializeJson(readings, accString);
+  return accString;
+}
+
+String IMU::getTemperatureStr() { return String(temperature_); }

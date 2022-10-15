@@ -4,7 +4,7 @@
 class OTA {
  public:
   // setup里调用
-  static void initOTA();
+  static void init();
   // loop里调用
   static void handle();
 };
