@@ -70,13 +70,14 @@ static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
   data->enc_diff = encoder_diff;
   data->state = encoder_state;
 
-  Serial.print("===encoder_read: ");
-  Serial.print("encoder_diff: ");
-  Serial.print(encoder_diff);
+  if (data->enc_diff != 0 || data->state != 0 || millis() % 1000 < 100) {
+    Serial.print("===encoder_read: ");
+    Serial.print("encoder_diff: ");
+    Serial.print(encoder_diff);
 
-  Serial.print(", encoder_state: ");
-  Serial.println(encoder_state);
-
+    Serial.print(", encoder_state: ");
+    Serial.println(encoder_state);
+  }
 
   encoder_diff = 0;
 }
@@ -156,28 +157,29 @@ void Display::setBackLight(float duty) {
 void Display::demoInit() {
 #if 1
   /* Create simple label */
-  lv_obj_t *label = lv_label_create(lv_scr_act());
-  lv_label_set_text(label, "hello world!");
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+  // lv_obj_t *label = lv_label_create(lv_scr_act());
+  // lv_label_set_text(label, "hello world!");
+  // lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 
   // button
-  lv_obj_t *btn1 = lv_btn_create(lv_scr_act());
-  lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
-  lv_obj_align(btn1, LV_ALIGN_CENTER, 40, -40);  //设置为中心位置的下面40个像素
+  // lv_obj_t *btn1 = lv_btn_create(lv_scr_act());
+  // lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
+  // lv_obj_align(btn1, LV_ALIGN_CENTER, 40, -40);
+  // //设置为中心位置的下面40个像素
 
-  label = lv_label_create(btn1);
-  lv_label_set_text(label, "Button");
-  lv_obj_center(label);
+  // label = lv_label_create(btn1);
+  // lv_label_set_text(label, "Button");
+  // lv_obj_center(label);
 
-  lv_obj_t *btn2 = lv_btn_create(lv_scr_act());
-  lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
-  lv_obj_align(btn2, LV_ALIGN_CENTER, 40, 40);
-  lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
-  lv_obj_set_height(btn2, LV_SIZE_CONTENT);
+  // lv_obj_t *btn2 = lv_btn_create(lv_scr_act());
+  // lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
+  // lv_obj_align(btn2, LV_ALIGN_CENTER, 40, 40);
+  // lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
+  // lv_obj_set_height(btn2, LV_SIZE_CONTENT);
 
-  label = lv_label_create(btn2);
-  lv_label_set_text(label, "Toggle");
-  lv_obj_center(label);
+  // label = lv_label_create(btn2);
+  // lv_label_set_text(label, "Toggle");
+  // lv_obj_center(label);
 
   // 开关
   lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
@@ -200,16 +202,16 @@ void Display::demoInit() {
   // visible*/ lv_textarea_add_text(ta, "hello world");  //显示指定内容
 
   // 画线
-  static lv_point_t line_points[] = {{0, 0}, {10, 10}};
-  lv_obj_t *line1;
-  line1 = lv_line_create(lv_scr_act());
-  lv_line_set_points(line1, line_points, 5); /*Set the points*/
-  lv_obj_center(line1);
+  // static lv_point_t line_points[] = {{0, 0}, {10, 10}};
+  // lv_obj_t *line1;
+  // line1 = lv_line_create(lv_scr_act());
+  // lv_line_set_points(line1, line_points, 5); /*Set the points*/
+  // lv_obj_center(line1);
 
   lv_group_t *group = lv_group_create();
-  lv_group_add_obj(group, label);
-  lv_group_add_obj(group, btn1);
-  lv_group_add_obj(group, btn2);
+  // lv_group_add_obj(group, label);
+  // lv_group_add_obj(group, btn1);
+  // lv_group_add_obj(group, btn2);
   lv_group_add_obj(group, sw);
   lv_group_add_obj(group, cb);
   lv_indev_set_group(indev_encoder, group);

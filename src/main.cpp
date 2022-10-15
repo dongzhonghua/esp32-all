@@ -30,9 +30,9 @@ void setup() {
   // chip_info();     // 打印芯片信息
   // spi_ffs.init();
   // listDir("/", 2);
-  mpu.init();      // 初始化mpu6050
-  wifi.init();     // 初始化网络
-  ssd1306.init();  // 12864初始化
+  // mpu.init();      // 初始化mpu6050
+  // wifi.init();     // 初始化网络
+  // ssd1306.init();  // 12864初始化
   // web_server.init(); // 初始化web和sse server
   // lvgl初始化
   screen.init();
@@ -44,10 +44,10 @@ void loop() {
   // ---ota 上面写具体的逻辑---
   // ota.handle();
 
-  mpu.update(false);
-  ssd1306_display(ssd1306, mpu, wifi);
+  // mpu.update(false);
+  // ssd1306_display(ssd1306, mpu, wifi);
   screen.routine();
   // web_server.update();
 
-  delay(10);
+  delay(100);
 }
