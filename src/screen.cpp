@@ -4,7 +4,8 @@
 #include <TFT_eSPI.h>
 #include <lv_demos.h>
 #include <lvgl.h>
-
+#include "img/yx1_160x128.h"
+#include "img/yx2_160x128.h"
 /*
 TFT pins should be set in
 path/to/Arduino/libraries/TFT_eSPI/User_Setups/Setup24_ST7789.h
@@ -193,6 +194,15 @@ void Display::demoInit() {
   lv_checkbox_set_text(cb, "book");             //设置控件名称
   lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
   lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);  //为控件添加事件
+
+  // 加载图片
+  lv_obj_t *img_test = lv_img_create(lv_scr_act());
+  LV_IMG_DECLARE(yx1_160x128);
+  LV_IMG_DECLARE(yx2_160x128);
+
+  lv_img_set_src(img_test, &yx1_160x128);
+
+
 
   // 文本框
   // lv_obj_t *ta = lv_textarea_create(lv_scr_act());
