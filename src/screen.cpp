@@ -2,7 +2,7 @@
 
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include <lv_demos.h>
+// #include <lv_demos.h>
 #include <lvgl.h>
 
 #include <iostream>
@@ -12,11 +12,6 @@
 #include "yx1_160x128.h"
 #include "yx2_160x128.h"
 
-/*
-TFT pins should be set in
-path/to/Arduino/libraries/TFT_eSPI/User_Setups/Setup24_ST7789.h
-*/
-/*Change to your screen resolution*/
 static const uint16_t screenWidth = 160;
 static const uint16_t screenHeight = 128;
 
@@ -71,22 +66,28 @@ static void touch_read_update() {
     }
     last_update_time = millis();
     if (encoder_state == LV_INDEV_STATE_PR && encoder_diff != 0) {
-      bool a = (lv_scr_act() == (&guider_ui)->screen_main);
-      bool b = (lv_scr_act() == (&guider_ui)->screen_picture);
+      bool is_screen_main = (lv_scr_act() == (&guider_ui)->screen_main);
+      bool is_screen_settings = (lv_scr_act() == (&guider_ui)->screen_settings);
+      bool is_screen_weather = (lv_scr_act() == (&guider_ui)->screen_weather);
       std::cout << lv_scr_act() << std::endl;
       std::cout << (&guider_ui)->screen_main << std::endl;
-      std::cout << a << std::endl;
-      std::cout << (&guider_ui)->screen_picture << std::endl;
-      std::cout << b << std::endl;
+      std::cout << is_screen_main << std::endl;
+      std::cout << (&guider_ui)->screen_settings << std::endl;
+      std::cout << is_screen_settings << std::endl;
+      std::cout << (&guider_ui)->screen_weather << std::endl;
+      std::cout << is_screen_weather << std::endl;
 
-
-      if (a) {
+      if (is_screen_main) {
         Serial.println("send to main");
         lv_event_send(guider_ui.screen_main, LV_EVENT_RETURN, NULL);
       }
-      if (b) {
-        Serial.println("send to picture");
-        lv_event_send(guider_ui.screen_picture, LV_EVENT_RETURN, NULL);
+      if (is_screen_settings) {
+        Serial.println("send to settings");
+        lv_event_send(guider_ui.screen_settings, LV_EVENT_RETURN, NULL);
+      }
+      if (is_screen_weather) {
+        Serial.println("send to weather");
+        lv_event_send(guider_ui.screen_weather, LV_EVENT_RETURN, NULL);
       }
     }
   }
@@ -147,15 +148,10 @@ void Display::init() {
   tft.setRotation(3); /* mirror */
 
 #ifdef TOUCH_CS
-  /*Set the touchscreen calibration data,
-   the actual data for your display can be acquired using
-   the Generic -> Touch_calibrate example from the TFT_eSPI library*/
   uint16_t calData[5] = {275, 3620, 264, 3532, 1};
   tft.setTouch(calData);
 #endif
-
   lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * 10);
-
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
@@ -194,79 +190,6 @@ void Display::demoInit() {
   setup_ui(&guider_ui);
   events_init(&guider_ui);
 
-  /* Create simple label */
-  // lv_obj_t *label = lv_label_create(lv_scr_act());
-  // lv_label_set_text(label, "hello world!");
-  // lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-
-  // button
-  // lv_obj_t *btn1 = lv_btn_create(lv_scr_act());
-  // lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
-  // lv_obj_align(btn1, LV_ALIGN_CENTER, 40, -40);
-  // //设置为中心位置的下面40个像素
-
-  // label = lv_label_create(btn1);
-  // lv_label_set_text(label, "Button");
-  // lv_obj_center(label);
-
-  // lv_obj_t *btn2 = lv_btn_create(lv_scr_act());
-  // lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
-  // lv_obj_align(btn2, LV_ALIGN_CENTER, 40, 40);
-  // lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
-  // lv_obj_set_height(btn2, LV_SIZE_CONTENT);
-
-  // label = lv_label_create(btn2);
-  // lv_label_set_text(label, "Toggle");
-  // lv_obj_center(label);
-
-  // // 开关
-  // lv_obj_t *sw = lv_switch_create(lv_scr_act());  //创建一个开关控件
-  // lv_obj_align(sw, LV_ALIGN_CENTER, -40, 40);
-  // lv_obj_add_event_cb(sw, event_handler, LV_EVENT_ALL,
-  //                     NULL);               //将该控件添加到事件当中
-  // lv_obj_add_state(sw, LV_STATE_CHECKED);  //打开开关
-
-  // // 复选框
-  // lv_obj_t *cb = lv_checkbox_create(lv_scr_act());
-  // lv_checkbox_set_text(cb, "book");             //设置控件名称
-  // lv_obj_align(cb, LV_ALIGN_CENTER, -40, -40);  //居中显示
-  // lv_obj_add_event_cb(cb, event_handler, LV_EVENT_ALL, NULL);
-  // //为控件添加事件
-
-  // // 加载图片
-  // lv_obj_t *img_test = lv_img_create(lv_scr_act());
-  // LV_IMG_DECLARE(yx1_160x128);
-  // LV_IMG_DECLARE(yx2_160x128);
-
-  // lv_img_set_src(img_test, &yx1_160x128);
-
-  // 文本框
-  // lv_obj_t *ta = lv_textarea_create(lv_scr_act());
-  // lv_textarea_set_one_line(ta, true);         //设置为单行输入
-  // lv_obj_align(ta, LV_ALIGN_TOP_MID, 0, 0);  //顶部居中对齐
-  // lv_obj_add_state(ta, LV_STATE_FOCUSED);   /*To be sure the cursor is
-  // visible*/ lv_textarea_add_text(ta, "hello world");  //显示指定内容
-
-  // 画线
-  // static lv_point_t line_points[] = {{0, 0}, {10, 10}};
-  // lv_obj_t *line1;
-  // line1 = lv_line_create(lv_scr_act());
-  // lv_line_set_points(line1, line_points, 5); /*Set the points*/
-  // lv_obj_center(line1);
-
-  // lv_group_add_obj(group, label);
-  // lv_group_add_obj(group, btn1);
-  // lv_group_add_obj(group, btn2);
-  // lv_group_add_obj(group, sw);
-  // lv_group_add_obj(group, cb);
-
-  // lv_group_add_obj(group, (&guider_ui)->screen);
-  // lv_group_add_obj(group, (&guider_ui)->screen_minus);
-  // lv_group_add_obj(group, (&guider_ui)->screen_minus_label);
-  // lv_group_add_obj(group, (&guider_ui)->screen_plus);
-  // lv_group_add_obj(group, (&guider_ui)->screen_plus_label);
-  // lv_group_add_obj(group, (&guider_ui)->screen_counter);
-
 #else
   /* Try an example from the lv_examples Arduino library
      make sure to include it as written above.
@@ -289,14 +212,4 @@ void Display::demoInit() {
   // lv_demo_stress();             // seems to be OK
 #endif
   Serial.println("lvgl demo Setup done");
-}
-
-void event_handler(lv_event_t *e) {
-  Serial.println("event_handler---------\n");
-  lv_event_code_t code = lv_event_get_code(e);
-  if (code == LV_EVENT_CLICKED) {
-    Serial.println("Clicked\n");
-  } else if (code == LV_EVENT_VALUE_CHANGED) {
-    Serial.println("Toggled\n");
-  }
 }
