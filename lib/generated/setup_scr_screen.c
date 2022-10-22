@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include "gui_guider.h"
 #include "events_init.h"
-#include "custom.h"
 
 
 void setup_scr_screen(lv_ui *ui){
@@ -56,8 +55,8 @@ void setup_scr_screen(lv_ui *ui){
 
 	//Write codes screen_plus
 	ui->screen_plus = lv_btn_create(ui->screen);
-	lv_obj_set_pos(ui->screen_plus, 28, 70);
-	lv_obj_set_size(ui->screen_plus, 33, 23);
+	lv_obj_set_pos(ui->screen_plus, 18, 70);
+	lv_obj_set_size(ui->screen_plus, 48, 32);
 
 	//Write style state: LV_STATE_DEFAULT for style_screen_plus_main_main_default
 	static lv_style_t style_screen_plus_main_main_default;
@@ -79,14 +78,14 @@ void setup_scr_screen(lv_ui *ui){
 	ui->screen_plus_label = lv_label_create(ui->screen_plus);
 	lv_label_set_text(ui->screen_plus_label, "Plus");
 	lv_obj_set_style_text_color(ui->screen_plus_label, lv_color_make(0x00, 0x00, 0x00), LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(ui->screen_plus_label, &lv_font_arial_5, LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui->screen_plus_label, &lv_font_arial_12, LV_STATE_DEFAULT);
 	lv_obj_set_style_pad_all(ui->screen_plus, 0, LV_STATE_DEFAULT);
 	lv_obj_align(ui->screen_plus_label, LV_ALIGN_CENTER, 0, 0);
 
 	//Write codes screen_minus
 	ui->screen_minus = lv_btn_create(ui->screen);
-	lv_obj_set_pos(ui->screen_minus, 90, 70);
-	lv_obj_set_size(ui->screen_minus, 33, 23);
+	lv_obj_set_pos(ui->screen_minus, 95, 70);
+	lv_obj_set_size(ui->screen_minus, 48, 32);
 
 	//Write style state: LV_STATE_DEFAULT for style_screen_minus_main_main_default
 	static lv_style_t style_screen_minus_main_main_default;
@@ -108,7 +107,7 @@ void setup_scr_screen(lv_ui *ui){
 	ui->screen_minus_label = lv_label_create(ui->screen_minus);
 	lv_label_set_text(ui->screen_minus_label, "Minus");
 	lv_obj_set_style_text_color(ui->screen_minus_label, lv_color_make(0x00, 0x00, 0x00), LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(ui->screen_minus_label, &lv_font_arial_5, LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui->screen_minus_label, &lv_font_arial_12, LV_STATE_DEFAULT);
 	lv_obj_set_style_pad_all(ui->screen_minus, 0, LV_STATE_DEFAULT);
 	lv_obj_align(ui->screen_minus_label, LV_ALIGN_CENTER, 0, 0);
 

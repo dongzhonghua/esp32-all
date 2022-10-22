@@ -55,7 +55,6 @@ git clone https://github.com/Bodmer/TFT_eSPI.git
 
 ### 2. 配置
 
-
 ### 3. 接线
 
   a. 按照对应的驱动里配置的接线即可。比如ST7735
@@ -128,3 +127,13 @@ https://www.bilibili.com/read/cv15906117
 主要就是把custom和generated复制过来，然后改一下include。
 
 现在已经可以运行计数的小项目了，但是目前存在的一个问题就是lvgl的焦点如果一直按up或者down，他不会在当前页面循环，而是就没了。这个需要解决一下。
+
+## 切换页面
+
+切换页面还是非常麻烦
+
+https://blog.csdn.net/m0_37187962/article/details/125526292
+
+https://blog.csdn.net/qq981378640/article/details/119959482
+
+还有一个是基于tileview界面循环切换，可以研究一下

@@ -112,3 +112,22 @@ String Network::getTime() {
 
   return formattedTime;
 }
+
+String Network::get(String url) {
+  String res;
+  http_.begin(url);
+  int httpCode = http_.GET();
+
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    // file found at server
+    if (httpCode == HTTP_CODE_OK) {
+      res = http_.getString();
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n",
+                  HTTPClient::errorToString(httpCode).c_str());
+  }
+  http_.end();
+  return res;
+}

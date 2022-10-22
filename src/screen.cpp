@@ -5,10 +5,12 @@
 #include <lv_demos.h>
 #include <lvgl.h>
 
+#include <iostream>
+
 #include "events_init.h"
 #include "gui_guider.h"
-#include "img/yx1_160x128.h"
-#include "img/yx2_160x128.h"
+#include "yx1_160x128.h"
+#include "yx2_160x128.h"
 
 /*
 TFT pins should be set in
@@ -20,6 +22,8 @@ static const uint16_t screenHeight = 128;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
+
+lv_ui guider_ui;
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
@@ -66,6 +70,25 @@ static void touch_read_update() {
       but_flag = true;
     }
     last_update_time = millis();
+    if (encoder_state == LV_INDEV_STATE_PR && encoder_diff != 0) {
+      bool a = (lv_scr_act() == (&guider_ui)->screen_main);
+      bool b = (lv_scr_act() == (&guider_ui)->screen_picture);
+      std::cout << lv_scr_act() << std::endl;
+      std::cout << (&guider_ui)->screen_main << std::endl;
+      std::cout << a << std::endl;
+      std::cout << (&guider_ui)->screen_picture << std::endl;
+      std::cout << b << std::endl;
+
+
+      if (a) {
+        Serial.println("send to main");
+        lv_event_send(guider_ui.screen_main, LV_EVENT_RETURN, NULL);
+      }
+      if (b) {
+        Serial.println("send to picture");
+        lv_event_send(guider_ui.screen_picture, LV_EVENT_RETURN, NULL);
+      }
+    }
   }
 }
 
@@ -159,8 +182,6 @@ void Display::setBackLight(float duty) {
   ledcWrite(LCD_BL_PWM_CHANNEL, (int)(duty * 255));
 }
 
-lv_ui guider_ui;
-
 void Display::demoInit() {
 #if 1
 
@@ -172,7 +193,6 @@ void Display::demoInit() {
   // gui guider生成的ui
   setup_ui(&guider_ui);
   events_init(&guider_ui);
-
 
   /* Create simple label */
   // lv_obj_t *label = lv_label_create(lv_scr_act());

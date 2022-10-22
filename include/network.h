@@ -27,6 +27,7 @@ class Network {
   String openWeather();
   String getIpStr();
   String getTime();
+  String get(String url);
 };
 
 #endif
