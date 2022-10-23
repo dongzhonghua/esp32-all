@@ -65,17 +65,17 @@ static void touch_read_update() {
       but_flag = true;
     }
     last_update_time = millis();
-    if (encoder_state == LV_INDEV_STATE_PR && encoder_diff != 0) {
+    if (touchRead(13) < 40) {
       bool is_screen_main = (lv_scr_act() == (&guider_ui)->screen_main);
       bool is_screen_settings = (lv_scr_act() == (&guider_ui)->screen_settings);
       bool is_screen_weather = (lv_scr_act() == (&guider_ui)->screen_weather);
-      std::cout << lv_scr_act() << std::endl;
-      std::cout << (&guider_ui)->screen_main << std::endl;
-      std::cout << is_screen_main << std::endl;
-      std::cout << (&guider_ui)->screen_settings << std::endl;
-      std::cout << is_screen_settings << std::endl;
-      std::cout << (&guider_ui)->screen_weather << std::endl;
-      std::cout << is_screen_weather << std::endl;
+      // std::cout << lv_scr_act() << std::endl;
+      // std::cout << (&guider_ui)->screen_main << std::endl;
+      // std::cout << is_screen_main << std::endl;
+      // std::cout << (&guider_ui)->screen_settings << std::endl;
+      // std::cout << is_screen_settings << std::endl;
+      // std::cout << (&guider_ui)->screen_weather << std::endl;
+      // std::cout << is_screen_weather << std::endl;
 
       if (is_screen_main) {
         Serial.println("send to main");
@@ -137,9 +137,9 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
 #endif
 
 void Display::init() {
-  // 背光
-  ledcSetup(LCD_BL_PWM_CHANNEL, 5000, 8);
-  ledcAttachPin(TFT_BLK, LCD_BL_PWM_CHANNEL);
+  // 背光，暂时不需要
+  // ledcSetup(LCD_BL_PWM_CHANNEL, 5000, 8);
+  // ledcAttachPin(TFT_BLK, LCD_BL_PWM_CHANNEL);
   lv_init();
 #if LV_USE_LOG != 0
   lv_log_register_print_cb(my_print);

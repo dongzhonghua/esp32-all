@@ -5,23 +5,23 @@
 #include <fstream>
 #include <iostream>
 
-#include "imu.h"
-#include "network.h"
-#include "ota.h"
+// #include "imu.h"
+// #include "network.h"
+// #include "ota.h"
 #include "screen.h"
-#include "spi_ffs.h"
-#include "ssd1306.h"
-#include "utils/common_utils.h"
-#include "utils/pic.h"
-#include "web_server.h"
-IMU mpu;
-Network wifi;
-SSD1306 ssd1306;
-OTA ota;
+// #include "spi_ffs.h"
+// #include "ssd1306.h"
+// #include "utils/common_utils.h"
+// #include "utils/pic.h"
+// #include "web_server.h"
+// IMU mpu;
+// Network wifi;
+// SSD1306 ssd1306;
+// OTA ota;
 Display screen;
-SPI_FFS spi_ffs;
+// SPI_FFS spi_ffs;
 
-WebServer web_server(mpu);
+// WebServer web_server(mpu);
 
 void setup() {
   Serial.begin(115200);  // 初始化串口
@@ -44,7 +44,7 @@ void loop() {
   // ---ota 上面写具体的逻辑---
   // ota.handle();
 
-  // mpu.update(false);
+  // mpu.update(true);
   // ssd1306_display(ssd1306, mpu, wifi);
   screen.routine();
   // web_server.update();

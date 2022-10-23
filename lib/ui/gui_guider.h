@@ -32,16 +32,16 @@ typedef struct {
   // 菜单屏幕
   lv_obj_t *screen_menu;
 
-  lv_obj_t *screen_menu_home;
+  lv_obj_t *screen_menu_home_btn;
   lv_obj_t *screen_menu_home_label;
 
-  lv_obj_t *screen_menu_weather;
+  lv_obj_t *screen_menu_weather_btn;
   lv_obj_t *screen_menu_weather_label;
 
-  lv_obj_t *screen_menu_setting;
+  lv_obj_t *screen_menu_setting_btn;
   lv_obj_t *screen_menu_setting_label;
 
-  lv_obj_t *screen_menu_bilibili;
+  lv_obj_t *screen_menu_bilibili_btn;
   lv_obj_t *screen_menu_bilibili_label;
 
   // 天气屏幕
@@ -78,6 +78,9 @@ void setup_scr_screen_weather(lv_ui *ui);
 LV_IMG_DECLARE(_temprature_16x16);
 LV_IMG_DECLARE(_humidity_16x16);
 LV_IMG_DECLARE(_setting_alpha_100x100);
+LV_IMG_DECLARE(_weather_alpha_100x100);
+LV_IMG_DECLARE(_love_alpha_100x100);
+LV_IMG_DECLARE(_bilibili_alpha_100x100);
 LV_IMG_DECLARE(_7_2x_60x60);
 LV_IMG_DECLARE(_37_2x_100x100);
 

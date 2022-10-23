@@ -28,6 +28,13 @@ void events_init_screen_weather(lv_ui *ui);
 // 主屏幕事件
 void events_init_screen_main_button(lv_ui *ui);
 
+// 菜单屏幕按钮事件
+void events_init_screen_menu_setting_button(lv_ui *ui);
+void events_init_screen_menu_home_button(lv_ui *ui);
+void events_init_screen_menu_weather_button(lv_ui *ui);
+void events_init_screen_menu_bilibili_button(lv_ui *ui);
+
+
 
 #ifdef __cplusplus
 }
