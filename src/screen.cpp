@@ -137,9 +137,9 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
 #endif
 
 void Display::init() {
-  // 背光，暂时不需要
-  // ledcSetup(LCD_BL_PWM_CHANNEL, 5000, 8);
-  // ledcAttachPin(TFT_BLK, LCD_BL_PWM_CHANNEL);
+  // 背光
+  ledcSetup(LCD_BL_PWM_CHANNEL, 5000, 8);
+  ledcAttachPin(TFT_BLK, LCD_BL_PWM_CHANNEL);
   lv_init();
 #if LV_USE_LOG != 0
   lv_log_register_print_cb(my_print);
@@ -168,13 +168,13 @@ void Display::init() {
   indev_drv.type = LV_INDEV_TYPE_ENCODER;
   indev_drv.read_cb = encoder_read;
   indev_encoder = lv_indev_drv_register(&indev_drv);
+  setBackLight(1);
 }
 
 void Display::routine() { lv_task_handler(); }
 
 void Display::setBackLight(float duty) {
   duty = constrain(duty, 0, 1);
-  duty = 1 - duty;
   ledcWrite(LCD_BL_PWM_CHANNEL, (int)(duty * 255));
 }
 
