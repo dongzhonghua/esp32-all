@@ -41,8 +41,6 @@ void setup() {
   // screen.init();
   // screen.demoInit();
   tf.init();
-
-
 }
 
 void loop() {
