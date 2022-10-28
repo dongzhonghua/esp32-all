@@ -8,7 +8,8 @@
 // #include "imu.h"
 // #include "network.h"
 // #include "ota.h"
-#include "screen.h"
+#include "sd_card.h"
+// #include "screen.h"
 // #include "spi_ffs.h"
 // #include "ssd1306.h"
 // #include "utils/common_utils.h"
@@ -18,8 +19,10 @@
 // Network wifi;
 // SSD1306 ssd1306;
 // OTA ota;
-Display screen;
+// Display screen;
 // SPI_FFS spi_ffs;
+SdCard tf;
+
 
 // WebServer web_server(mpu);
 
@@ -35,8 +38,10 @@ void setup() {
   // ssd1306.init();  // 12864初始化
   // web_server.init(); // 初始化web和sse server
   // lvgl初始化
-  screen.init();
-  screen.demoInit();
+  // screen.init();
+  // screen.demoInit();
+  tf.init();
+
 
 }
 
@@ -46,7 +51,7 @@ void loop() {
 
   // mpu.update(true);
   // ssd1306_display(ssd1306, mpu, wifi);
-  screen.routine();
+  // screen.routine();
   // web_server.update();
 
   delay(100);
