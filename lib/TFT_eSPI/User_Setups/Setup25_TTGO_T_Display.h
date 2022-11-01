@@ -13,15 +13,15 @@
 
 //#define TFT_MISO -1
 
-#define TFT_MOSI            19
+#define TFT_MOSI            23
 #define TFT_SCLK            18
 #define TFT_CS              5
-#define TFT_DC              16
-#define TFT_RST             23
+#define TFT_DC              2
+#define TFT_RST             4
 
 #define TOUCH_CS            -1
 
-#define TFT_BL          4  // Display backlight control pin
+#define TFT_BL          15  // Display backlight control pin
 
 #define TFT_BACKLIGHT_ON HIGH  // HIGH or LOW are options
 
