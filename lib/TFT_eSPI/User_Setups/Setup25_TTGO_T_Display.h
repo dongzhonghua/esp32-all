@@ -19,9 +19,9 @@
 #define TFT_DC              2
 #define TFT_RST             4
 
-#define TOUCH_CS            -1
+// #define TOUCH_CS            -1
 
-#define TFT_BL          15  // Display backlight control pin
+#define TFT_BLK          15  // Display backlight control pin
 
 #define TFT_BACKLIGHT_ON HIGH  // HIGH or LOW are options
 

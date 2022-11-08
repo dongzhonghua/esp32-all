@@ -1,12 +1,6 @@
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
-#include <ArduinoJson.h>
-
-#include <fstream>
-#include <iostream>
-
+#include <Arduino.h>
 // #include "imu.h"
-// #include "network.h"
+#include "network.h"
 // #include "ota.h"
 // #include "sd_card.h"
 #include "screen.h"
@@ -15,13 +9,16 @@
 // #include "utils/common_utils.h"
 // #include "utils/pic.h"
 // #include "web_server.h"
+#include "rgb_led.h"
+
 // IMU mpu;
-// Network wifi;
+Network wifi;
 // SSD1306 ssd1306;
 // OTA ota;
 Display screen;
 // SPI_FFS spi_ffs;
 // SdCard tf;
+Pixel rgb;
 
 
 // WebServer web_server(mpu);
@@ -30,6 +27,10 @@ void setup() {
   Serial.begin(115200);  // 初始化串口
   // ---ota初始化，上面写具体逻辑---
   // ota.init();
+
+  rgb.init();
+  rgb.setBrightness(0.1).setRGB(0, 0, 255, 0);
+
   // chip_info();     // 打印芯片信息
   // spi_ffs.init();
   // listDir("/", 2);
@@ -41,6 +42,10 @@ void setup() {
   screen.init();
   screen.demoInit();
   // tf.init();
+
+
+
+
 }
 
 void loop() {
@@ -51,6 +56,6 @@ void loop() {
   // ssd1306_display(ssd1306, mpu, wifi);
   screen.routine();
   // web_server.update();
-
+  rgb.setRainbow(0, 0.03);
   delay(100);
 }
