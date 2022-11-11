@@ -145,7 +145,7 @@ void Display::init() {
   lv_log_register_print_cb(my_print);
 #endif
   tft.begin();        /* TFT init */
-  tft.setRotation(1); /* mirror */
+  tft.setRotation(1); 
 
 #ifdef TOUCH_CS
   uint16_t calData[5] = {275, 3620, 264, 3532, 1};
