@@ -12,8 +12,8 @@
 #include "yx1_160x128.h"
 #include "yx2_160x128.h"
 
-static const uint16_t screenWidth = 160;
-static const uint16_t screenHeight = 128;
+static const uint16_t screenWidth = 280;
+static const uint16_t screenHeight = 240;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
@@ -145,7 +145,7 @@ void Display::init() {
   lv_log_register_print_cb(my_print);
 #endif
   tft.begin();        /* TFT init */
-  tft.setRotation(3); /* mirror */
+  tft.setRotation(1); /* mirror */
 
 #ifdef TOUCH_CS
   uint16_t calData[5] = {275, 3620, 264, 3532, 1};
@@ -168,7 +168,7 @@ void Display::init() {
   indev_drv.type = LV_INDEV_TYPE_ENCODER;
   indev_drv.read_cb = encoder_read;
   indev_encoder = lv_indev_drv_register(&indev_drv);
-  setBackLight(1);
+  setBackLight(0.5);
 }
 
 void Display::routine() { lv_task_handler(); }

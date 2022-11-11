@@ -3,7 +3,7 @@
 
 #define ST7789_DRIVER     // Configure all registers
 
-#define TFT_WIDTH  240
+#define TFT_WIDTH  280
 #define TFT_HEIGHT 240
 
 //#define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
@@ -19,13 +19,15 @@
 //#define TFT_SCLK  27
 
 // Generic ESP32 setup
-#define TFT_MISO 19
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS    -1 // Not connected
-#define TFT_DC    2
-#define TFT_RST   4  // Connect reset to ensure display initialises
-#define TFT_BLK   5  // 背光
+#define TFT_MOSI            23
+#define TFT_SCLK            18
+#define TFT_CS              5
+#define TFT_DC              2
+#define TFT_RST             4
+#define TFT_BLK          15  // Display backlight control pin
+
+// #define TOUCH_CS            -1
+
 
 // For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
 // #define TFT_CS   -1      // Define as not used

@@ -5,17 +5,20 @@
 
 #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
-#define TFT_WIDTH 172  // ST7789 172 x 320
-#define TFT_HEIGHT 320  // ST7789 240 x 320
+#define TFT_WIDTH 280  // ST7789 172 x 320
+#define TFT_HEIGHT 240  // ST7789 240 x 320
 
-#define TFT_BL           21    // LED back-light control pin
 #define TFT_BACKLIGHT_ON HIGH  // Level to turn ON back-light (HIGH or LOW)
 
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS   5   // Chip select control pin
-#define TFT_DC   22  // Data Command control pin
-#define TFT_RST  17  // Reset pin (could connect to RST pin)
+#define TFT_MOSI            23
+#define TFT_SCLK            18
+#define TFT_CS              5
+#define TFT_DC              2
+#define TFT_RST             4
+#define TFT_BLK          15  // Display backlight control pin
+
+// #define TOUCH_CS            -1
+
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
