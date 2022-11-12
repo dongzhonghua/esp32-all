@@ -63,7 +63,7 @@ void SdCard::listDir(const char* dirname, uint8_t levels) {
       if (levels) {
         listDir(file.name(), levels - 1);
       }
-    } else if(String(file.name()).startsWith("/.")) {
+    } else if(!String(file.name()).startsWith("/.")) {
       Serial.print("  FILE: ");
       Serial.print(file.name());
       Serial.print("  SIZE: ");

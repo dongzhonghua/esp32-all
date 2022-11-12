@@ -1,44 +1,23 @@
-<!DOCTYPE HTML><html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <title>ESP Web Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="src/style.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+	<title>小破站</title>
 </head>
 <body>
-  <div class="topnav">
-    <h1><i class="far fa-compass"></i> MPU6050 <i class="far fa-compass"></i></h1>
-  </div>
-  <div class="content">
-    <div class="cards">
-      <div class="card">
-        <p class="card-title">GYROSCOPE</p>
-        <p><span class="reading">X: <span id="gyroX"></span> rad</span></p>
-        <p><span class="reading">Y: <span id="gyroY"></span> rad</span></p>
-        <p><span class="reading">Z: <span id="gyroZ"></span> rad</span></p>
-      </div>
-      <div class="card">
-        <p class="card-title">ACCELEROMETER</p>
-        <p><span class="reading">X: <span id="accX"></span> ms<sup>2</sup></span></p>
-        <p><span class="reading">Y: <span id="accY"></span> ms<sup>2</sup></span></p>
-        <p><span class="reading">Z: <span id="accZ"></span> ms<sup>2</sup></span></p>
-      </div>
-      <div class="card">
-        <p class="card-title">TEMPERATURE</p>
-        <p><span class="reading"><span id="temp"></span> °C</span></p>
-        <p class="card-title">3D ANIMATION</p>
-        <button id="reset" onclick="resetPosition(this)">RESET POSITION</button>
-        <button id="resetX" onclick="resetPosition(this)">X</button>
-        <button id="resetY" onclick="resetPosition(this)">Y</button>
-        <button id="resetZ" onclick="resetPosition(this)">Z</button>
-      </div>
-    </div>
-    <div class="cube-content">
-      <div id="3Dcube"></div>
-    </div>
-  </div>
-<script src="src/script.js"></script>
+	<center>
+	<h1 class="h1 font-w300 mt-15" align="center">小  破  站</h1>
+	</center>
+	<center>
+	<p><a href="webgame/webgame.html">网页游戏</a></p>
+	<p><a href="upload.html">文件上传</a></p>
+	<p><a href="video_index.html">在线影院</a></p>
+	<p><a href="/clipboard">剪切面板</a></p>
+	<p><a href="/wificonnect">模式转换</a></p>
+	<p><a href="/mpu">MPU6050</a></p>
+	</center>
+	
 </body>
+
 </html>

@@ -16,20 +16,45 @@ unsigned long accelerometerDelay = 200;
 WebServer::WebServer(IMU imu) { imu_ = imu; }
 
 // 官方文档写的非常详细了 https://github.com/me-no-dev/ESPAsyncWebServer
+
+// TODO SD卡服务器暂时告一段落，也没必要花那么长时间去搞这个，后面应该重点搞成一个REST的形式
+// 单片机里保留前端的应该只有很少的核心功能：
+// 1. WIFI配网
+// 2. 
+// 具体可以参考：https://github.com/heluoly/ESP32-SDcard-WebServer
+
 void WebServer::init() {
   server_.on("^\\/src\\/([a-zA-Z_.-0-9]+)$", HTTP_GET, [](AsyncWebServerRequest *request) {
     String path = request->pathArg(0);
     String contentType = request->contentType();
     Serial.println(path);
-    Serial.println(path);
-    File contentFile = SD.open("/www/"+path);  //从SD卡读取文件
+    Serial.println(contentType);
+    File contentFile = SD.open("/www/" + path);  //从SD卡读取文件
     if (!contentFile) {
       Serial.println("404");
       request->send(404, "text/plain", "访问失败");
       return;
     }
-    request->send(contentFile, contentType,
-                  contentFile.size());  //向客户端发送文件
+    size_t contentLength = contentFile.size();
+    Serial.println(contentLength);
+    request->send(contentFile, contentType, contentLength);  //向客户端发送文件
+    contentFile.close();
+  });
+
+  server_.on("^\\/(\\w+\\.\\w+)$", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String path = request->pathArg(0);
+    String contentType = request->contentType();
+    Serial.println(path);
+    Serial.println(contentType);
+    File contentFile = SD.open("/www/" + path);  //从SD卡读取文件
+    if (!contentFile) {
+      Serial.println("404");
+      request->send(404, "text/plain", "访问失败");
+      return;
+    }
+    size_t contentLength = contentFile.size();
+    Serial.println(contentLength);
+    request->send(contentFile, contentType, contentLength);  //向客户端发送文件
     contentFile.close();
   });
 
@@ -42,8 +67,23 @@ void WebServer::init() {
       return;
     }
     String contentType = "text/html";  // Content-Type
-    request->send(contentFile, contentType,
-                  contentFile.size());  //向客户端发送文件
+    size_t contentLength = contentFile.size();
+    Serial.println(contentLength);
+    request->send(contentFile, contentType, contentLength);  //向客户端发送文件
+    contentFile.close();
+  });
+
+  server_.on("/mpu", HTTP_GET, [](AsyncWebServerRequest *request) {
+    File contentFile = SD.open("/www/mpu.html");  //从SD卡读取文件
+    if (!contentFile) {
+      Serial.println("404");
+      request->send(404, "text/plain", "访问失败");
+      return;
+    }
+    String contentType = "text/html";  // Content-Type
+    size_t contentLength = contentFile.size();
+    Serial.println(contentLength);
+    request->send(contentFile, contentType, contentLength);  //向客户端发送文件
     contentFile.close();
   });
   // 这种方式使用SPIFFS
