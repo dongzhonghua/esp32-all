@@ -47,9 +47,9 @@ void IMU::update(bool debug, int interval) {
     Serial.print(gz_, 1);
     Serial.println(" rps");
 
-    Serial.print("Temperature ");
-    Serial.print(temperature_, 1);
-    Serial.println(" C");
+    // Serial.print("Temperature ");
+    // Serial.print(temperature_, 1);
+    // Serial.println(" C");
   }
 }
 float IMU::getAccelX() { return ax_; }
@@ -69,15 +69,15 @@ float IMU::getTemperature() { return temperature_; }
 String IMU::getGyroReadings() {
   DynamicJsonDocument readings(128);
   if (abs(gx_) > gyro_x_error_) {
-    gyro_x_ += gx_ / 20.0;
+    gyro_x_ += gx_ / 90.0;
   }
 
   if (abs(gy_) > gyro_y_error_) {
-    gyro_y_ += gy_ / 20.0;
+    gyro_y_ += gy_ / 90.0;
   }
 
   if (abs(gz_) > gyro_x_error_) {
-    gyro_z_ += gz_ / 20.0;
+    gyro_z_ += gz_ / 90.0;
   }
 
   readings["gyroX"] = String(gyro_x_);

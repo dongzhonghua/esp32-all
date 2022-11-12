@@ -3,11 +3,15 @@
 
 #include "FS.h"
 #include "SPIFFS.h"
-
+/**
+ * SPIFFS has been deprecated
+ * TODO 有时间看看 LittleFS
+ * https://github.com/me-no-dev/ESPAsyncWebServer/issues/780
+ *
+ */
 class SPI_FFS {
  public:
   void init();
-  
 };
 
 void listDir(const char *dirname, uint8_t levels);

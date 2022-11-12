@@ -100,12 +100,12 @@ static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
   data->state = encoder_state;
 
   if (data->enc_diff != 0 || data->state != 0 || millis() % 1000 < 100) {
-    Serial.print("===encoder_read: ");
-    Serial.print("encoder_diff: ");
-    Serial.print(encoder_diff);
+    // Serial.print("===encoder_read: ");
+    // Serial.print("encoder_diff: ");
+    // Serial.print(encoder_diff);
 
-    Serial.print(", encoder_state: ");
-    Serial.println(encoder_state);
+    // Serial.print(", encoder_state: ");
+    // Serial.println(encoder_state);
   }
 
   encoder_diff = 0;

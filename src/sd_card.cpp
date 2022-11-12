@@ -8,14 +8,15 @@ void SdCard::init() {
    * MISO  = 19;
    * SCK   = 18;
    */
-  SPIClass* sd_spi = new SPIClass(VSPI);  // another SPI
+  SPIClass* sd_spi = new SPIClass();  // another SPI
+  sd_spi->begin(26, 19, 25, 33);
   int i = 1;
-  while (!SD.begin(5, *sd_spi)) {
+  while (!SD.begin(33, *sd_spi)) {
     if (i > 10) {
       Serial.println("Card Mount Failed!");
       return;
     }
-    delay(100);
+    delay(50);
     Serial.print(i++);
     Serial.println(" Card Mount Failed, try again...");
   }
@@ -56,13 +57,13 @@ void SdCard::listDir(const char* dirname, uint8_t levels) {
 
   File file = root.openNextFile();
   while (file) {
-    if (file.isDirectory()) {
+    if (file.isDirectory() && !String(file.name()).startsWith("/.")) {
       Serial.print("  DIR : ");
       Serial.println(file.name());
       if (levels) {
         listDir(file.name(), levels - 1);
       }
-    } else {
+    } else if(String(file.name()).startsWith("/.")) {
       Serial.print("  FILE: ");
       Serial.print(file.name());
       Serial.print("  SIZE: ");
@@ -189,8 +190,6 @@ void SdCard::readBinFromSd(const char* path, uint8_t* buf) {
   size_t len = 0;
   if (file) {
     len = file.size();
-    size_t flen = len;
-
     while (len) {
       size_t toRead = len;
       if (toRead > 512) {

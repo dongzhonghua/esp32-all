@@ -1,6 +1,10 @@
 
 #include <web_server.h>
 
+#include "sd_card.h"
+
+extern IMU mpu;
+
 // 计时器变量
 unsigned long lastTime = 0;
 unsigned long lastTimeTemperature = 0;
@@ -11,34 +15,59 @@ unsigned long accelerometerDelay = 200;
 
 WebServer::WebServer(IMU imu) { imu_ = imu; }
 
+// 官方文档写的非常详细了 https://github.com/me-no-dev/ESPAsyncWebServer
 void WebServer::init() {
+  server_.on("^\\/src\\/([a-zA-Z_.-0-9]+)$", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String path = request->pathArg(0);
+    String contentType = request->contentType();
+    Serial.println(path);
+    Serial.println(path);
+    File contentFile = SD.open("/www/"+path);  //从SD卡读取文件
+    if (!contentFile) {
+      Serial.println("404");
+      request->send(404, "text/plain", "访问失败");
+      return;
+    }
+    request->send(contentFile, contentType,
+                  contentFile.size());  //向客户端发送文件
+    contentFile.close();
+  });
+
   // 处理 Web Server
   server_.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", "text/html");
+    File contentFile = SD.open("/www/index.html");  //从SD卡读取文件
+    if (!contentFile) {
+      Serial.println("404");
+      request->send(404, "text/plain", "访问失败");
+      return;
+    }
+    String contentType = "text/html";  // Content-Type
+    request->send(contentFile, contentType,
+                  contentFile.size());  //向客户端发送文件
+    contentFile.close();
   });
+  // 这种方式使用SPIFFS
+  // server_.serveStatic("/", SPIFFS, "/");
 
-  server_.serveStatic("/", SPIFFS, "/");
-  auto imu = imu_;
-
-  server_.on("/reset", HTTP_GET, [&imu](AsyncWebServerRequest *request) {
-    imu.setGyroX(0.0);
-    imu.setGyroY(0.0);
-    imu.setGyroZ(0.0);
+  server_.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request) {
+    mpu.setGyroX(0.0);
+    mpu.setGyroY(0.0);
+    mpu.setGyroZ(0.0);
     request->send(200, "text/plain", "OK");
   });
 
-  server_.on("/resetX", HTTP_GET, [&imu](AsyncWebServerRequest *request) {
-    imu.setGyroX(0.0);
+  server_.on("/resetX", HTTP_GET, [](AsyncWebServerRequest *request) {
+    mpu.setGyroX(0.0);
     request->send(200, "text/plain", "OK");
   });
 
-  server_.on("/resetY", HTTP_GET, [&imu](AsyncWebServerRequest *request) {
-    imu.setGyroY(0.0);
+  server_.on("/resetY", HTTP_GET, [](AsyncWebServerRequest *request) {
+    mpu.setGyroY(0.0);
     request->send(200, "text/plain", "OK");
   });
 
-  server_.on("/resetZ", HTTP_GET, [&imu](AsyncWebServerRequest *request) {
-    imu.setGyroZ(0.0);
+  server_.on("/resetZ", HTTP_GET, [](AsyncWebServerRequest *request) {
+    mpu.setGyroZ(0.0);
     request->send(200, "text/plain", "OK");
   });
 
@@ -60,18 +89,18 @@ void WebServer::init() {
 void WebServer::update() {
   if ((millis() - lastTime) > gyroDelay) {
     // 通过传感器读数将事件发送到Web服务器
-    events_.send(imu_.getGyroReadings().c_str(), "gyro_readings", millis());
+    events_.send(mpu.getGyroReadings().c_str(), "gyro_readings", millis());
     lastTime = millis();
   }
   if ((millis() - lastTimeAcc) > accelerometerDelay) {
     // 通过传感器读数将事件发送到Web服务器
-    events_.send(imu_.getAccReadings().c_str(), "accelerometer_readings",
+    events_.send(mpu.getAccReadings().c_str(), "accelerometer_readings",
                  millis());
     lastTimeAcc = millis();
   }
   if ((millis() - lastTimeTemperature) > temperatureDelay) {
     // 通过传感器读数将事件发送到Web服务器
-    events_.send(imu_.getTemperatureStr().c_str(), "temperature_reading",
+    events_.send(mpu.getTemperatureStr().c_str(), "temperature_reading",
                  millis());
     lastTimeTemperature = millis();
   }
