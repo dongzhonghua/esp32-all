@@ -12,7 +12,7 @@
 #include "rgb_led.h"
 #include "web_server.h"
 
-IMU mpu;
+My_MPU6050 mpu;
 Network wifi;
 // SSD1306 ssd1306;
 // OTA ota;
@@ -21,7 +21,7 @@ Display screen;
 SdCard tf;
 Pixel rgb;
 
-WebServer web_server(mpu);
+WebServer web_server;
 
 void setup() {
   Serial.begin(115200);  // 初始化串口

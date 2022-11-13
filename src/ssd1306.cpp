@@ -1,6 +1,11 @@
 #include "ssd1306.h"
 #include "utils/common_utils.h"
 
+
+extern My_MPU6050 mpu;
+extern Network wifi;
+extern SSD1306 ssd1306;
+
 void SSD1306::init() {
   display_ = Adafruit_SSD1306(128, 64, &Wire);
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -18,7 +23,7 @@ void SSD1306::init() {
   last_update_time_ = millis();
 }
 
-void ssd1306_display(SSD1306 &ssd1306, IMU &mpu, Network &wifi, int interval) {
+void ssd1306_display(int interval) {
   if (millis() - ssd1306.lastUpdateTime() > 2 * interval) {
     ssd1306.setLastUpdateTime(millis());
   }
@@ -28,19 +33,19 @@ void ssd1306_display(SSD1306 &ssd1306, IMU &mpu, Network &wifi, int interval) {
     ssd1306.getDisplay()->setCursor(0, 0);
 
     ssd1306.getDisplay()->println("Accelerometer - m/s^2");
-    ssd1306.getDisplay()->print(mpu.getAccelX(), 1);
+    ssd1306.getDisplay()->print(mpu.ax(), 1);
     ssd1306.getDisplay()->print(", ");
-    ssd1306.getDisplay()->print(mpu.getAccelY(), 1);
+    ssd1306.getDisplay()->print(mpu.ay(), 1);
     ssd1306.getDisplay()->print(", ");
-    ssd1306.getDisplay()->print(mpu.getAccelZ(), 1);
+    ssd1306.getDisplay()->print(mpu.az(), 1);
     ssd1306.getDisplay()->println("");
 
     ssd1306.getDisplay()->println("Gyroscope - rps");
-    ssd1306.getDisplay()->print(mpu.getGyroX(), 1);
+    ssd1306.getDisplay()->print(mpu.gx(), 1);
     ssd1306.getDisplay()->print(", ");
-    ssd1306.getDisplay()->print(mpu.getGyroY(), 1);
+    ssd1306.getDisplay()->print(mpu.gy(), 1);
     ssd1306.getDisplay()->print(", ");
-    ssd1306.getDisplay()->print(mpu.getGyroZ(), 1);
+    ssd1306.getDisplay()->print(mpu.gz(), 1);
     ssd1306.getDisplay()->println("");
 
     ssd1306.getDisplay()->display();

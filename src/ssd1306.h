@@ -1,6 +1,7 @@
 #ifndef SSD1306_H
 #define SSD1306_H
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_Sensor.h>
 #include "imu.h"
 #include "network.h"
 
@@ -21,6 +22,7 @@ class SSD1306 {
   }
 };
 
-void ssd1306_display(SSD1306 &ssd1306, IMU &mpu, Network &wifi, int interval = 4000);
+void ssd1306_display(int interval = 4000);
+// void ssd1306_display(SSD1306 &ssd1306, IMU &mpu, Network &wifi, int interval = 4000);
 
 #endif

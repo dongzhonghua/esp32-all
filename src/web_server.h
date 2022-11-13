@@ -10,8 +10,6 @@
 
 class WebServer {
  public:
-  WebServer(IMU imu);
-
   void update();
 
   void init();
@@ -19,7 +17,6 @@ class WebServer {
  private:
   AsyncWebServer server_ = AsyncWebServer(80);
   AsyncEventSource events_ = AsyncEventSource("/events");
-  IMU imu_;
 };
 
 #endif /* WEB_SERVER_H */

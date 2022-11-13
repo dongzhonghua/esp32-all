@@ -3,7 +3,7 @@
 
 #include "sd_card.h"
 
-extern IMU mpu;
+extern My_MPU6050 mpu;
 
 // 计时器变量
 unsigned long lastTime = 0;
@@ -12,8 +12,6 @@ unsigned long lastTimeAcc = 0;
 unsigned long gyroDelay = 10;
 unsigned long temperatureDelay = 1000;
 unsigned long accelerometerDelay = 200;
-
-WebServer::WebServer(IMU imu) { imu_ = imu; }
 
 // 官方文档写的非常详细了 https://github.com/me-no-dev/ESPAsyncWebServer
 
@@ -121,6 +119,8 @@ void WebServer::init() {
     // 并将重新连接延迟设置为1秒
     client->send("hello!", NULL, millis(), 10000);
   });
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+
   server_.addHandler(&events_);
 
   server_.begin();
