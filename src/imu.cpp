@@ -1,6 +1,5 @@
 #include "imu.h"
 
-
 void My_MPU6050::init() {
   Serial.println("init MPU6050...");
 
@@ -91,16 +90,18 @@ void My_MPU6050::update(bool debug, int interval) {
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    Serial.print("ypr\t");
     gyro_x_ = ypr[0] * 180 / PI;
     gyro_y_ = ypr[1] * 180 / PI;
     gyro_z_ = ypr[2] * 180 / PI;
 
-    Serial.print(gyro_x_);
-    Serial.print("\t");
-    Serial.print(gyro_y_);
-    Serial.print("\t");
-    Serial.println(gyro_z_);
+    if (debug) {
+      Serial.print("ypr\t");
+      Serial.print(gyro_x_);
+      Serial.print("\t");
+      Serial.print(gyro_y_);
+      Serial.print("\t");
+      Serial.println(gyro_z_);
+    }
   }
 
   int16_t ax, ay, az;
@@ -114,20 +115,22 @@ void My_MPU6050::update(bool debug, int interval) {
   gy_ = gy / 131.0 * SENSORS_DPS_TO_RADS;
   gz_ = gz / 131.0 * SENSORS_DPS_TO_RADS;
 
-  Serial.print("a/g:\t");
-  Serial.print(ax_);
-  Serial.print("\t");
-  Serial.print(ay_);
-  Serial.print("\t");
-  Serial.print(az_);
-  Serial.print("\t");
-  Serial.print(gx_);
-  Serial.print("\t");
-  Serial.print(gy_);
-  Serial.print("\t");
-  Serial.print(gz_);
-  Serial.print("\t");
-  Serial.println(temperature_);
+  if (debug) {
+    Serial.print("a/g:\t");
+    Serial.print(ax_);
+    Serial.print("\t");
+    Serial.print(ay_);
+    Serial.print("\t");
+    Serial.print(az_);
+    Serial.print("\t");
+    Serial.print(gx_);
+    Serial.print("\t");
+    Serial.print(gy_);
+    Serial.print("\t");
+    Serial.print(gz_);
+    Serial.print("\t");
+    Serial.println(temperature_);
+  }
 }
 
 String My_MPU6050::getGyroReadings() {

@@ -3,6 +3,7 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 // #include <lv_demos.h>
+#include <imu.h>
 #include <lvgl.h>
 
 #include <iostream>
@@ -17,6 +18,8 @@ static const uint16_t screenHeight = 240;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
+
+extern My_MPU6050 mpu;
 
 lv_ui guider_ui;
 
@@ -49,23 +52,23 @@ bool but_flag = false;
 
 static void touch_read_update() {
   if (millis() - last_update_time > interval) {
-    if (touchRead(12) < 40) {
+    if (mpu.ax() > 5) {
       encoder_state = LV_INDEV_STATE_PR;  //按下
     } else {
       encoder_state = LV_INDEV_STATE_REL;  //松开
     }
 
-    if (touchRead(14) < 40 && but_flag) {
+    if (mpu.ay() < -5 && but_flag) {
       encoder_diff--;
       but_flag = false;
-    } else if (touchRead(27) < 40 && but_flag) {
+    } else if (mpu.ay() > 5 && but_flag) {
       encoder_diff++;
       but_flag = false;
     } else {
       but_flag = true;
     }
     last_update_time = millis();
-    if (touchRead(13) < 40) {
+    if (mpu.ax() < -5) {
       bool is_screen_main = (lv_scr_act() == (&guider_ui)->screen_main);
       bool is_screen_settings = (lv_scr_act() == (&guider_ui)->screen_settings);
       bool is_screen_weather = (lv_scr_act() == (&guider_ui)->screen_weather);
@@ -144,8 +147,8 @@ void Display::init() {
 #if LV_USE_LOG != 0
   lv_log_register_print_cb(my_print);
 #endif
-  tft.begin();        /* TFT init */
-  tft.setRotation(1); 
+  tft.begin(); /* TFT init */
+  tft.setRotation(1);
 
 #ifdef TOUCH_CS
   uint16_t calData[5] = {275, 3620, 264, 3532, 1};
