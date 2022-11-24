@@ -1,5 +1,22 @@
 #include "imu.h"
 
+const char *active_type_info[] = {"TURN_RIGHT", "RETURN", "TURN_LEFT",
+                                  "UP",         "DOWN",   "GO_FORWORD",
+                                  "SHAKE",      "UNKNOWN"};
+
+My_MPU6050::My_MPU6050() {
+  action_info.isValid = false;
+  action_info.active = ACTIVE_TYPE::UNKNOWN;
+  action_info.long_time = true;
+  // 初始化数据
+  for (int pos = 0; pos < ACTION_HISTORY_BUF_LEN; ++pos) {
+    // act_info_history.push_back(UNKNOWN);
+    act_info_history[pos] = UNKNOWN;
+  }
+  act_info_history_ind = ACTION_HISTORY_BUF_LEN - 1;
+  this->order = 0;  // 表示方位
+}
+
 void My_MPU6050::init() {
   Serial.println("init MPU6050...");
 
@@ -80,6 +97,11 @@ void My_MPU6050::init() {
   Serial.println("MPU6050 succeed...");
 }
 
+void My_MPU6050::setOrder(uint8_t order)  // 设置方向
+{
+  this->order = order;  // 表示方位
+}
+
 void My_MPU6050::update(bool debug, int interval) {
   // if programming failed, don't try to do anything
   if (!dmpReady) return;
@@ -147,78 +169,109 @@ String My_MPU6050::getGyroReadings() {
   return gyroString;
 }
 
-// void My_Adafruit_MPU6050::init() {
-//   auto start = millis();
-//   Serial.println("init MPU6050...");
-//   if (!imu_.begin() && millis() - start > 10000) {
-//     delay(10);
-//     Serial.print(".");
-//   }
-//   Serial.println("MPU6050 succeed...");
-// }
+ImuAction *My_MPU6050::getAction(void) {
+  // 基本方法: 通过对近来的动作数据简单的分析，确定出动作的类型
+  ImuAction tmp_info;
+  getVirtureMotion6(&tmp_info);
 
-// void My_Adafruit_MPU6050::update(bool debug, int interval) {
-//   sensors_event_t accel, gyro, temperature;
-//   imu_.getEvent(&accel, &gyro, &temperature);
+  // Serial.printf("gx = %d\tgy = %d\tgz = %d", tmp_info.v_gx, tmp_info.v_gy,
+  // tmp_info.v_gz); Serial.printf("\tax = %d\tay = %d\taz = %d\n",
+  // tmp_info.v_ax, tmp_info.v_ay, tmp_info.v_az);
 
-//   ax_ = accel.acceleration.x;
-//   ay_ = accel.acceleration.y;
-//   az_ = accel.acceleration.z;
+  tmp_info.active = ACTIVE_TYPE::UNKNOWN;
 
-//   gx_ = gyro.gyro.x;
-//   gy_ = gyro.gyro.y;
-//   gz_ = gyro.gyro.z;
+  // 原先判断的只是加速度，现在要加上陀螺仪
+  if (ACTIVE_TYPE::UNKNOWN == tmp_info.active) {
+    if (tmp_info.v_ay > 4000) {
+      tmp_info.active = ACTIVE_TYPE::TURN_LEFT;
+    } else if (tmp_info.v_ay < -4000) {
+      tmp_info.active = ACTIVE_TYPE::TURN_RIGHT;
+    } else if (tmp_info.v_ay > 10000 || tmp_info.v_ay < -10000) {
+      // 震动检测
+      tmp_info.active = ACTIVE_TYPE::SHAKE;
+    }
+  }
 
-//   temperature_ = temperature.temperature;
+  if (ACTIVE_TYPE::UNKNOWN == tmp_info.active) {
+    if (tmp_info.v_ax > 5000) {
+      tmp_info.active = ACTIVE_TYPE::UP;
+    } else if (tmp_info.v_ax < -5000) {
+      tmp_info.active = ACTIVE_TYPE::DOWN;
+    } else if (action_info.v_ax > 10000 || action_info.v_ax < -10000) {
+      // 震动检测
+      tmp_info.active = ACTIVE_TYPE::SHAKE;
+    }
+  }
 
-//   if (debug) {
-//     Serial.print("Accelerometer ");
-//     Serial.print("X: ");
-//     Serial.print(ax_, 1);
-//     Serial.print(" m/s^2, ");
-//     Serial.print("Y: ");
-//     Serial.print(ay_, 1);
-//     Serial.print(" m/s^2, ");
-//     Serial.print("Z: ");
-//     Serial.print(az_, 1);
-//     Serial.println(" m/s^2");
+  // 储存当前检测的动作数据到动作缓冲区中
+  act_info_history_ind = (act_info_history_ind + 1) % ACTION_HISTORY_BUF_LEN;
+  int index = act_info_history_ind;
+  act_info_history[index] = tmp_info.active;
 
-//     Serial.print("Gyroscope ");
-//     Serial.print("X: ");
-//     Serial.print(gx_, 1);
-//     Serial.print(" rps, ");
-//     Serial.print("Y: ");
-//     Serial.print(gy_, 1);
-//     Serial.print(" rps, ");
-//     Serial.print("Z: ");
-//     Serial.print(gz_, 1);
-//     Serial.println(" rps");
+  // 本次流程的动作识别
+  if (!action_info.isValid) {
+    bool isHoldDown = false;  // 长按的标志位
+    // 本次流程的动作识别
+    int second = (index + ACTION_HISTORY_BUF_LEN - 1) % ACTION_HISTORY_BUF_LEN;
+    int third = (index + ACTION_HISTORY_BUF_LEN - 2) % ACTION_HISTORY_BUF_LEN;
+    // 先识别"短按" （注：不要写成else if）
+    if (ACTIVE_TYPE::UNKNOWN != tmp_info.active) {
+      action_info.isValid = 1;
+      action_info.active = tmp_info.active;
+    }
+    // 识别"长按","长按"相对"短按"高级（所以键值升级放在短按之后）
+    if (act_info_history[index] == act_info_history[second] &&
+        act_info_history[second] == act_info_history[third]) {
+      // 目前只识别前后的长按
+      if (ACTIVE_TYPE::UP == tmp_info.active) {
+        isHoldDown = true;
+        action_info.isValid = 1;
+        action_info.active = ACTIVE_TYPE::GO_FORWORD;
+      } else if (ACTIVE_TYPE::DOWN == tmp_info.active) {
+        isHoldDown = true;
+        action_info.isValid = 1;
+        action_info.active = ACTIVE_TYPE::RETURN;
+      }
+      // 如需左右的长按可在此处添加"else if"的逻辑
 
-//     // Serial.print("Temperature ");
-//     // Serial.print(temperature_, 1);
-//     // Serial.println(" C");
-//   }
-// }
+      if (isHoldDown) {
+        // 本次识别为长按，则手动清除识别过的历史数据 避免对下次动作识别的影响
+        act_info_history[second] = ACTIVE_TYPE::UNKNOWN;
+        act_info_history[third] = ACTIVE_TYPE::UNKNOWN;
+      }
+    }
+  }
 
-// String My_Adafruit_MPU6050::getGyroReadings() {
-//   DynamicJsonDocument readings(128);
-//   if (abs(gx_) > gyro_x_error_) {
-//     gyro_x_ += gx_ / 90.0;
-//   }
+  return &action_info;
+}
 
-//   if (abs(gy_) > gyro_y_error_) {
-//     gyro_y_ += gy_ / 90.0;
-//   }
+void My_MPU6050::getVirtureMotion6(ImuAction *action_info) {
+  mpu.getMotion6(&(action_info->v_ax), &(action_info->v_ay),
+                 &(action_info->v_az), &(action_info->v_gx),
+                 &(action_info->v_gy), &(action_info->v_gz));
 
-//   if (abs(gz_) > gyro_x_error_) {
-//     gyro_z_ += gz_ / 90.0;
-//   }
+  if (order & X_DIR_TYPE) {
+    action_info->v_ax = -action_info->v_ax;
+    action_info->v_gx = -action_info->v_gx;
+  }
 
-//   readings["gyroX"] = String(gyro_x_);
-//   readings["gyroY"] = String(gyro_y_);
-//   readings["gyroZ"] = String(gyro_z_);
+  if (order & Y_DIR_TYPE) {
+    action_info->v_ay = -action_info->v_ay;
+    action_info->v_gy = -action_info->v_gy;
+  }
 
-//   String gyroString = "";
-//   serializeJson(readings, gyroString);
-//   return gyroString;
-// }
+  if (order & Z_DIR_TYPE) {
+    action_info->v_az = -action_info->v_az;
+    action_info->v_gz = -action_info->v_gz;
+  }
+
+  if (order & XY_DIR_TYPE) {
+    int16_t swap_tmp;
+    swap_tmp = action_info->v_ax;
+    action_info->v_ax = action_info->v_ay;
+    action_info->v_ay = swap_tmp;
+    swap_tmp = action_info->v_gx;
+    action_info->v_gx = action_info->v_gy;
+    action_info->v_gy = swap_tmp;
+  }
+}

@@ -128,6 +128,14 @@ https://www.bilibili.com/read/cv15906117
 
 现在已经可以运行计数的小项目了，但是目前存在的一个问题就是lvgl的焦点如果一直按up或者down，他不会在当前页面循环，而是就没了。这个需要解决一下。
 
+所有带文件夹的都铺平到一个文件里
+
+```
+ #include "lvgl/lvgl.h" 替换成 #include "lvgl.h"
+#include "lv_font.h" 替换成 #include "src/font/lv_font.h"
+```
+
+
 ## 切换页面
 
 切换页面还是非常麻烦

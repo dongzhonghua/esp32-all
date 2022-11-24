@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
+#define TIMEZERO_OFFSIZE (28800000)
 #define NTP_OFFSET 28800        // In seconds
 #define NTP_INTERVAL 60 * 1000  // In miliseconds
 #define NTP_ADDRESS "ntp.aliyun.com"

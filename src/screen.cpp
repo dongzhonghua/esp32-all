@@ -8,10 +8,7 @@
 
 #include <iostream>
 
-#include "events_init.h"
-#include "gui_guider.h"
-#include "yx1_160x128.h"
-#include "yx2_160x128.h"
+#include "lv_port_fs.h"
 
 static const uint16_t screenWidth = 280;
 static const uint16_t screenHeight = 240;
@@ -20,8 +17,6 @@ static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * 10];
 
 extern My_MPU6050 mpu;
-
-lv_ui guider_ui;
 
 TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
@@ -68,31 +63,31 @@ static void touch_read_update() {
       but_flag = true;
     }
     last_update_time = millis();
-    if (mpu.ax() < -5) {
-      bool is_screen_main = (lv_scr_act() == (&guider_ui)->screen_main);
-      bool is_screen_settings = (lv_scr_act() == (&guider_ui)->screen_settings);
-      bool is_screen_weather = (lv_scr_act() == (&guider_ui)->screen_weather);
-      // std::cout << lv_scr_act() << std::endl;
-      // std::cout << (&guider_ui)->screen_main << std::endl;
-      // std::cout << is_screen_main << std::endl;
-      // std::cout << (&guider_ui)->screen_settings << std::endl;
-      // std::cout << is_screen_settings << std::endl;
-      // std::cout << (&guider_ui)->screen_weather << std::endl;
-      // std::cout << is_screen_weather << std::endl;
+    // if (mpu.ax() < -5) {
+    //   bool is_screen_main = (lv_scr_act() == (&guider_ui)->screen_main);
+    //   bool is_screen_settings = (lv_scr_act() == (&guider_ui)->screen_settings);
+    //   bool is_screen_weather = (lv_scr_act() == (&guider_ui)->screen_weather);
+    //   // std::cout << lv_scr_act() << std::endl;
+    //   // std::cout << (&guider_ui)->screen_main << std::endl;
+    //   // std::cout << is_screen_main << std::endl;
+    //   // std::cout << (&guider_ui)->screen_settings << std::endl;
+    //   // std::cout << is_screen_settings << std::endl;
+    //   // std::cout << (&guider_ui)->screen_weather << std::endl;
+    //   // std::cout << is_screen_weather << std::endl;
 
-      if (is_screen_main) {
-        Serial.println("send to main");
-        lv_event_send(guider_ui.screen_main, LV_EVENT_RETURN, NULL);
-      }
-      if (is_screen_settings) {
-        Serial.println("send to settings");
-        lv_event_send(guider_ui.screen_settings, LV_EVENT_RETURN, NULL);
-      }
-      if (is_screen_weather) {
-        Serial.println("send to weather");
-        lv_event_send(guider_ui.screen_weather, LV_EVENT_RETURN, NULL);
-      }
-    }
+    //   if (is_screen_main) {
+    //     Serial.println("send to main");
+    //     lv_event_send(guider_ui.screen_main, LV_EVENT_RETURN, NULL);
+    //   }
+    //   if (is_screen_settings) {
+    //     Serial.println("send to settings");
+    //     lv_event_send(guider_ui.screen_settings, LV_EVENT_RETURN, NULL);
+    //   }
+    //   if (is_screen_weather) {
+    //     Serial.println("send to weather");
+    //     lv_event_send(guider_ui.screen_weather, LV_EVENT_RETURN, NULL);
+    //   }
+    // }
   }
 }
 
@@ -102,13 +97,13 @@ static void encoder_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
   data->enc_diff = encoder_diff;
   data->state = encoder_state;
 
-  if (data->enc_diff != 0 || data->state != 0 || millis() % 1000 < 100) {
-    // Serial.print("===encoder_read: ");
-    // Serial.print("encoder_diff: ");
-    // Serial.print(encoder_diff);
+  if (data->enc_diff != 0 || data->state != 0) {
+    Serial.print("===encoder_read: ");
+    Serial.print("encoder_diff: ");
+    Serial.print(encoder_diff);
 
-    // Serial.print(", encoder_state: ");
-    // Serial.println(encoder_state);
+    Serial.print(", encoder_state: ");
+    Serial.println(encoder_state);
   }
 
   encoder_diff = 0;
@@ -172,6 +167,12 @@ void Display::init() {
   indev_drv.read_cb = encoder_read;
   indev_encoder = lv_indev_drv_register(&indev_drv);
   setBackLight(0.5);
+
+  lv_fs_fatfs_init();
+
+  lv_group_t *group = lv_group_create();
+  lv_group_set_default(group);
+  lv_indev_set_group(indev_encoder, group);
 }
 
 void Display::routine() { lv_task_handler(); }
@@ -190,8 +191,8 @@ void Display::demoInit() {
   lv_indev_set_group(indev_encoder, group);
 
   // gui guider生成的ui
-  setup_ui(&guider_ui);
-  events_init(&guider_ui);
+  // setup_ui(&guider_ui);
+  // events_init(&guider_ui);
 
 #else
   /* Try an example from the lv_examples Arduino library
