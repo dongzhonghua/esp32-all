@@ -77,7 +77,7 @@ void setup() {
 
   wifi.init();  // 初始化网络
   // ssd1306.init();  // 12864初始化
-  web_server.init();  // 初始化web和sse server
+  // web_server.init();  // 初始化web和sse server
 
   // 先初始化一次动作数据 防空指针
   act_info = mpu.getAction();
@@ -86,19 +86,20 @@ void setup() {
   xTimerAction = xTimerCreate("Action Check", 200 / portTICK_PERIOD_MS, pdTRUE,
                               (void *)0, actionCheckHandle);
   xTimerStart(xTimerAction, 0);
+  Serial.println("init success...");
 }
 
 void loop() {
   // ---ota 上面写具体的逻辑---
   // ota.handle();
+
   screen.routine();
 
   mpu.update(false);
   // ssd1306_display(ssd1306, mpu, wifi);
 
-  web_server.update();
+  // web_server.update();
 
-  rgb.setRainbow(0, 0.03);
 
   if (isCheckAction) {
     isCheckAction = false;

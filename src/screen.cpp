@@ -161,18 +161,18 @@ void Display::init() {
   lv_disp_drv_register(&disp_drv);
 
   /*Register a encoder input device*/
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_ENCODER;
-  indev_drv.read_cb = encoder_read;
-  indev_encoder = lv_indev_drv_register(&indev_drv);
-  setBackLight(0.5);
+  // static lv_indev_drv_t indev_drv;
+  // lv_indev_drv_init(&indev_drv);
+  // indev_drv.type = LV_INDEV_TYPE_ENCODER;
+  // indev_drv.read_cb = encoder_read;
+  // indev_encoder = lv_indev_drv_register(&indev_drv);
+  // lv_group_t *group = lv_group_create();
+  // lv_group_set_default(group);
+  // lv_indev_set_group(indev_encoder, group);
+
 
   lv_fs_fatfs_init();
-
-  lv_group_t *group = lv_group_create();
-  lv_group_set_default(group);
-  lv_indev_set_group(indev_encoder, group);
+  setBackLight(0.5);
 }
 
 void Display::routine() { lv_task_handler(); }

@@ -48,7 +48,7 @@ void app_control_gui_init(void)
     // 为消除开机的局部白屏问题 增加如下一层（可考虑删除改进）
     app_scr_t = lv_obj_create(app_scr);
     lv_obj_add_style(app_scr_t, &default_style, LV_STATE_DEFAULT);
-    lv_obj_set_size(app_scr_t, 240, 240);
+    lv_obj_set_size(app_scr_t, 240, 280);
     lv_obj_align(app_scr_t, LV_ALIGN_CENTER, 0, 0);
     lv_scr_load(app_scr_t);
 }

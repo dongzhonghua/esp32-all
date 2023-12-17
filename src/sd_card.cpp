@@ -9,7 +9,7 @@ void SdCard::init() {
    * SCK   = 18;
    */
   SPIClass* sd_spi = new SPIClass();  // another SPI
-  sd_spi->begin(26, 19, 25, 33);
+  sd_spi->begin(18, 19, 23, 33);
   int i = 1;
   while (!SD.begin(33, *sd_spi)) {
     if (i > 10) {

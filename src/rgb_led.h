@@ -3,8 +3,8 @@
 
 #include <FastLED.h>
 
-#define RGB_LED_NUM 1
-#define RGB_LED_PIN 32
+#define RGB_LED_NUM 1 // led的数量
+#define RGB_LED_PIN 32 // led的端口
 
 struct RgbConfig
 {
